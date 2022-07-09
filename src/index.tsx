@@ -1,6 +1,6 @@
-import '@/assets/fonts/iconfont.css';
 import ReactDOM from 'react-dom/client';
 import App from './router';
+import '@styles/fonts/iconfont.css';
 import './index.less';
 
 const root = ReactDOM.createRoot(

@@ -91,6 +91,7 @@ module.exports = merge(common, {
     new MiniCssExtractPlugin({
       // 设置打包出来css文件放置在 style 目录下
       filename: 'style/[name].[hash:6].css',
+      ignoreOrder: true,
     }),
     new CssMinimizerWebpackPlugin(),
   ],

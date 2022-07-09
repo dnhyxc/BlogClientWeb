@@ -900,6 +900,33 @@ module.exports = merge(common, {
 
 > 设置完毕之后，重新运行 `npm run build` 看样式是否被压缩。
 
+### 打包时排除没有用到的 CSS
+
+#### 安装所需插件
+
+```json
+yarn add purgecss-webpack-plugin glob -D
+```
+
+#### 更改 webpack.common.config.js
+
+在 `webpack.common.config.js` 中增加 `PurgeCSSPlugin` 相关的配置：
+
+```js
+const glob = require('glob');
+const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    // ...
+    // 排除无用的css
+    new PurgeCSSPlugin({
+      paths: glob.sync(path.join(__dirname, 'index.html')),
+    }),
+  ],
+};
+```
+
 ### 压缩 JS
 
 #### 安装 terser-webpack-plugin

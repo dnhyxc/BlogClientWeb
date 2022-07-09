@@ -5,7 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\components\Access\index.tsx
  */
-import React, { Fragment, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'antd';
 import Header from '@/components/Header';

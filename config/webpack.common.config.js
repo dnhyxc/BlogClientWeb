@@ -3,6 +3,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const PurgeCSSPlugin = require('purgecss-webpack-plugin'); // css优化去重复无效代码
+const glob = require('glob');
 // const WebpackBar = require('webpackbar');
 
 module.exports = {
@@ -38,7 +40,7 @@ module.exports = {
         type: 'asset/resource',
         exclude: /node_modules/,
         generator: {
-          filename: 'font/[name]_[contenthash:8][ext]', // 指定打包后文件存放的文件夹和文件名
+          filename: 'assets/fonts/[name]_[contenthash:8][ext]', // 指定打包后文件存放的文件夹和文件名
         },
       },
       {
@@ -77,6 +79,10 @@ module.exports = {
       dependencies: true,
       dependenciesCount: 10000,
       percentBy: 'entries',
+    }),
+    // 打包时排除没有用到的 css 代码
+    new PurgeCSSPlugin({
+      paths: glob.sync(path.join(__dirname, 'index.html')),
     }),
   ],
   // 精简控制台编译输出信息
