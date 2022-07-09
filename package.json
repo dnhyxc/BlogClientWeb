@@ -8,7 +8,7 @@
     "build": "rimraf dist && webpack --config ./config/webpack.prod.config.js",
     "build:dev": "rimraf dist && webpack --config ./config/webpack.dev.config.js",
     "prepare": "husky install",
-    "test": "npx eslint ./src --ext ts,tsx,js,jsx"
+    "test": "npx eslint ./src --ext ts,tsx,js,jsx --fix"
   },
   "keywords": [],
   "author": "",
