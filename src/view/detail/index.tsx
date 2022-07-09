@@ -16,6 +16,7 @@ import { getMackdownById } from '@/controller/index';
 import RightBar from '@/components/RightBar';
 import Toc from '@/components/ArticleToc';
 import DraftInput from '@/components/DraftInput';
+import Comments from '@/components/Comments';
 import styles from './index.less';
 
 interface DetailParams {
@@ -107,6 +108,9 @@ const ArticleDetail: React.FC = () => {
             )}
             <div className={styles.draftInputWrap}>
               <DraftInput />
+            </div>
+            <div>
+              <Comments />
             </div>
           </div>
           <div className={styles.rightBar}>
