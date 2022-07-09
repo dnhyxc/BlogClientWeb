@@ -14,7 +14,7 @@
     "module": "esnext", // 模块引入方式
     "target": "es5", // 打包后编译成什么形式
     "jsx": "react-jsx", // 引入react
-    "allowJs": true, // 在ts文件中允许引入js文件
+    // "allowJs": true, // 在ts文件中允许引入js文件
     "moduleResolution": "node",
     "baseUrl": ".", // 引入模块的方式
     // 路径别名配置
