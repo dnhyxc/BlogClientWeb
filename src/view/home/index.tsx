@@ -5,6 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\view\home\index.tsx
  */
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from 'antd';
 import Content from '@/components/Content';

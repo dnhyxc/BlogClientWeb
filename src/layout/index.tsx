@@ -5,6 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\layout\index.tsx
  */
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Layout } from 'antd';
 import MenuList from '@/components/MenuList';

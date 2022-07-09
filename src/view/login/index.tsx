@@ -5,6 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\view\login\index.tsx
  */
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'antd';
 import styles from './index.less';

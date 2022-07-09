@@ -5,6 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\view\about\index.tsx
  */
+import React from 'react';
 import { Button } from 'antd';
 import Content from '@/components/Content';
 import Header from '@/components/Header';

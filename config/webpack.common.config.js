@@ -5,6 +5,7 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const PurgeCSSPlugin = require('purgecss-webpack-plugin'); // css优化去重复无效代码
 const glob = require('glob');
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 // const WebpackBar = require('webpackbar');
 
 module.exports = {
@@ -23,7 +24,7 @@ module.exports = {
       {
         test: /\.(js|jsx|ts|tsx)/,
         exclude: /node_modules/,
-        use: ['babel-loader'],
+        use: ['thread-loader', 'babel-loader'],
       },
       {
         test: /\.(png|jpe?g|gif)$/i,
@@ -62,7 +63,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'public/index.html',
       filename: 'index.html',
-      inject: 'body',
       minify: {
         removeComments: true,
       },
@@ -84,6 +84,17 @@ module.exports = {
     new PurgeCSSPlugin({
       paths: glob.sync(path.join(__dirname, 'index.html')),
     }),
+    new webpack.DllReferencePlugin({
+      manifest: path.resolve(__dirname, '../vendor/dll/main.manifest.json'),
+      // context: path.resolve(__dirname, '../'),
+    }),
+    new AddAssetHtmlPlugin({
+      filepath: require.resolve(
+        path.resolve(__dirname, '../vendor/dll/main.dll.js')
+      ),
+      outputPath: '/vendor',
+      publicPath: '/vendor',
+    }),
   ],
   // 精简控制台编译输出信息
   stats: {
@@ -98,10 +109,6 @@ module.exports = {
       '@styles': path.resolve(__dirname, '../src/styles'),
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.less', '.scss'],
-  },
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM',
   },
   // 解决警告：You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
   performance: {

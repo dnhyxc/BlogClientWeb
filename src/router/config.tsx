@@ -5,7 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\router\config.tsx
  */
-import { lazy, Suspense, ReactNode } from 'react';
+import React, { lazy, Suspense, ReactNode } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { Spin } from 'antd';
 import AppLayout from '@/layout';
