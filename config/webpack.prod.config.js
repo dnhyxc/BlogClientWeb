@@ -87,19 +87,17 @@ module.exports = merge(common, {
       },
     ],
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      // 设置打包出来css文件放置在 style 目录下
-      filename: 'style/[name].[hash:6].css',
-      ignoreOrder: true,
-    }),
-    new CssMinimizerWebpackPlugin(),
-  ],
+  plugins: [new CssMinimizerWebpackPlugin()],
   optimization: {
     minimize: true,
     minimizer: [
+      new MiniCssExtractPlugin({
+        // 设置打包出来css文件放置在 style 目录下
+        filename: 'style/[name].[hash:6].css',
+        ignoreOrder: true,
+      }),
       new TerserPlugin({
-        parallel: true, // 多进程
+        // parallel: true, // 多进程
         extractComments: false, // 删除注释
         terserOptions: {
           compress: {
