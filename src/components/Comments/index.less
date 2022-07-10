@@ -1,0 +1,76 @@
+@import '~@styles/common.less';
+
+.Comments {
+  background-color: #fff;
+  padding: 0 20px 20px 20px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  .commentWrap {
+    display: flex;
+    justify-content: space-between;
+
+    .avatar {
+      margin-right: 20px;
+
+      .image {
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+      }
+    }
+
+    .commentContent {
+      flex: 1;
+
+      .userInfo {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+
+        .name {
+          font-size: 16px;
+          font-weight: 600;
+        }
+
+        .date {
+          color: @font-4;
+        }
+      }
+
+      .desc {
+        margin-bottom: 10px;
+      }
+
+      .commentItem {
+        .action {
+          .like {
+            margin-right: 10px;
+          }
+        }
+      }
+
+      .commentChild {
+        background-color: @background;
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+
+        .commentChildItem {
+          display: flex;
+          margin-bottom: 20px;
+
+          .avatar {
+            width: 35px;
+            height: 35px;
+
+            .image {
+              width: 35px;
+              height: 35px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

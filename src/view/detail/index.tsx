@@ -109,7 +109,9 @@ const ArticleDetail: React.FC = () => {
             <div className={styles.draftInputWrap}>
               <DraftInput />
             </div>
-            <div>
+            <div className={styles.commentList}>
+              <div className={styles.title}>全部评论</div>
+              <Comments />
               <Comments />
             </div>
           </div>

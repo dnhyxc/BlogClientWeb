@@ -56,7 +56,7 @@ const TagList: React.FC<IProps> = () => {
 
   return (
     <div className={styles.TagList}>
-      <Header needLeft needMenu>
+      <Header needMenu>
         {name}
         标签
       </Header>

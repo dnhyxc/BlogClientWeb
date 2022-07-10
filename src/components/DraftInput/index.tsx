@@ -17,8 +17,6 @@ const DraftInput: React.FC<IProps> = () => {
   }, []);
 
   const onClickNode = (e: any) => {
-    console.log(e.target);
-
     if (!e.target.id) {
       setShowIcon(false);
     }
