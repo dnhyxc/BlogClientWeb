@@ -64,5 +64,4 @@ const Comments: React.FC<IProps> = () => {
     </div>
   );
 };
-
 export default Comments;
