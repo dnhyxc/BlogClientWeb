@@ -7,11 +7,18 @@ interface IProps {
   name?: string;
   text?: string;
   className?: string;
+  iconWrapClass?: string;
 }
 
-const Icons: React.FC<IProps> = ({ children, text, name, className }) => {
+const Icons: React.FC<IProps> = ({
+  children,
+  text,
+  name,
+  className,
+  iconWrapClass,
+}) => {
   return (
-    <span className={styles.Icons}>
+    <span className={classname(styles.Icons, iconWrapClass)}>
       <span className={classname(className, `iconfont ${name}`)} />
       <span className={styles.child}>
         <span>{text}</span>
