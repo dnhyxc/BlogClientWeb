@@ -3,103 +3,107 @@ import Image from '@/components/Image';
 import ABOUTME from '@/assets/images/about_me.jpg';
 import Icons from '@/components/Icons';
 import styles from './index.less';
+import { comments } from '../../../mock';
 
 interface IProps {}
+
+console.log(comments, 'comments');
 
 const Comments: React.FC<IProps> = () => {
   return (
     <div className={styles.Comments}>
-      <div className={styles.commentWrap}>
-        <div className={styles.avatar}>
-          <Image url={ABOUTME} className={styles.image} />
-        </div>
-        <div className={styles.commentContent}>
-          <div className={styles.commentItem}>
-            <div className={styles.userInfo}>
-              <span className={styles.name}>dnhyxc</span>
-              <span className={styles.date}>2022-07-09</span>
-            </div>
-            <div className={styles.desc}>
-              通过一个 js 脚本创建一个 style
-              标签，里面包含一些样式。style-loader 是不能单独使用的，需要与
-              `css-loader` 一起使用。因为它并不负责解析 css 之前的依赖关系，每个
-              loader 的功能都是单一的，各自拆分独立。
-            </div>
-            <div className={styles.action}>
-              <Icons
-                name="icon-dianzan"
-                text="点赞"
-                iconWrapClass={styles.iconWrap}
-              />
-              <Icons
-                name="icon-xiaoxi"
-                text="回复"
-                iconWrapClass={styles.iconWrap}
-              />
-            </div>
-          </div>
-          <div className={styles.commentChild}>
-            <div className={styles.commentChildItem}>
+      {comments &&
+        comments.length > 0 &&
+        comments.map((i) => {
+          return (
+            <div className={styles.commentWrap} key={i.uid}>
               <div className={styles.avatar}>
                 <Image url={ABOUTME} className={styles.image} />
               </div>
-              <div>
-                <div className={styles.userInfo}>
-                  <span className={styles.name}>dnhyxc</span>
-                  <span className={styles.date}>2022-07-09</span>
-                </div>
-                <div className={styles.desc}>
-                  通过一个 js 脚本创建一个 style
-                  标签，里面包含一些样式。style-loader 是不能单独使用的，需要与
-                  `css-loader` 一起使用。因为它并不负责解析 css
-                  之前的依赖关系，每个 loader 的功能都是单一的，各自拆分独立。
-                </div>
-                <div className={styles.action}>
-                  <Icons
-                    name="icon-dianzan"
-                    text="点赞"
-                    iconWrapClass={styles.iconWrap}
-                  />
-                  <Icons
-                    name="icon-xiaoxi"
-                    text="回复"
-                    iconWrapClass={styles.iconWrap}
-                  />
+              <div className={styles.commentContent}>
+                <div className={styles.commentItem}>
+                  <div className={styles.userInfo}>
+                    <span className={styles.name}>{i.username}</span>
+                    <span className={styles.date}>{i.date}</span>
+                  </div>
+                  <div className={styles.desc}>{i.content}</div>
+                  <div className={styles.action}>
+                    <Icons
+                      name="icon-dianzan"
+                      text={i.likeCount || '点赞'}
+                      iconWrapClass={styles.iconWrap}
+                    />
+                    <Icons
+                      name="icon-xiaoxi"
+                      text={i.replyCount || '回复'}
+                      iconWrapClass={styles.iconWrap}
+                    />
+                  </div>
+                  {i.replyList && i.replyList.length > 0 && (
+                    <div className={styles.commentChild}>
+                      {i.replyList.slice(0, 2).map((j) => {
+                        return (
+                          <div className={styles.commentChildItem} key={j.uid}>
+                            <div className={styles.avatar}>
+                              <Image url={ABOUTME} className={styles.image} />
+                            </div>
+                            <div className={styles.commentChildItemContent}>
+                              <div className={styles.userInfo}>
+                                <span className={styles.name}>
+                                  {j.username}
+                                  {j.author !== 0 && (
+                                    <span className={styles.isAuthor}>
+                                      (作者)
+                                    </span>
+                                  )}
+                                  {j.fromUsername && (
+                                    <span className={styles.replyInfo}>
+                                      回复
+                                      <span className={styles.fromUsername}>
+                                        {j.fromUsername}
+                                      </span>
+                                    </span>
+                                  )}
+                                </span>
+                                <span className={styles.date}>{j.date}</span>
+                              </div>
+                              <div className={styles.desc}>
+                                {j.replyContent}
+                              </div>
+                              {j.formContent && (
+                                <div className={styles.formContent}>
+                                  {`“${j.formContent}”`}
+                                </div>
+                              )}
+                              <div className={styles.action}>
+                                <Icons
+                                  name="icon-dianzan"
+                                  text={j.likeCount || '点赞'}
+                                  iconWrapClass={styles.iconWrap}
+                                />
+                                <Icons
+                                  name="icon-xiaoxi"
+                                  text={j.replyCount || '回复'}
+                                  iconWrapClass={styles.iconWrap}
+                                />
+                              </div>
+                              {i.replyList.length > 2 && (
+                                <div className={styles.viewMore}>
+                                  查看更多回复
+                                  <Icons name="icon-youjiantou" />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-            <div className={styles.commentChildItem}>
-              <div className={styles.avatar}>
-                <Image url={ABOUTME} className={styles.image} />
-              </div>
-              <div>
-                <div className={styles.userInfo}>
-                  <span className={styles.name}>dnhyxc</span>
-                  <span className={styles.date}>2022-07-09</span>
-                </div>
-                <div className={styles.desc}>
-                  通过一个 js 脚本创建一个 style
-                  标签，里面包含一些样式。style-loader 是不能单独使用的，需要与
-                  `css-loader` 一起使用。因为它并不负责解析 css
-                  之前的依赖关系，每个 loader 的功能都是单一的，各自拆分独立。
-                </div>
-                <div className={styles.action}>
-                  <Icons
-                    name="icon-dianzan"
-                    text="点赞"
-                    iconWrapClass={styles.iconWrap}
-                  />
-                  <Icons
-                    name="icon-xiaoxi"
-                    text="回复"
-                    iconWrapClass={styles.iconWrap}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          );
+        })}
     </div>
   );
 };

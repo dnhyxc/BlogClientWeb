@@ -5,7 +5,7 @@ import styles from './index.less';
 interface IProps {
   children?: ReactNode;
   name?: string;
-  text?: string;
+  text?: string | number;
   className?: string;
   iconWrapClass?: string;
 }

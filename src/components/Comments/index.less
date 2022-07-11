@@ -9,6 +9,7 @@
   .commentWrap {
     display: flex;
     justify-content: space-between;
+    padding-top: 30px;
 
     .avatar {
       margin-right: 20px;
@@ -36,6 +37,24 @@
         .name {
           font-size: 16px;
           font-weight: 600;
+
+          .isAuthor {
+            margin-left: 10px;
+            font-weight: 400;
+            font-size: 14px;
+          }
+
+          .replyInfo {
+            font-weight: 400;
+            font-size: 14px;
+            margin-left: 10px;
+
+            .fromUsername {
+              font-size: 16px;
+              margin-left: 10px;
+              font-weight: 600;
+            }
+          }
         }
 
         .date {
@@ -44,18 +63,34 @@
       }
 
       .desc {
-        margin-bottom: 10px;
+        // margin-bottom: 10px;
+      }
+
+      .formContent {
+        margin-top: 10px;
+        border: 1px solid @layer-3-border;
+        padding: 5px 20px 6px 20px;
+        background-color: @background;
+        border-radius: 5px;
+      }
+
+      .action {
+        margin-top: 10px;
       }
 
       .commentChild {
-        background-color: @background;
-        margin-top: 20px;
+        background-color: @layer-2-2;
+        margin-top: 15px;
         padding: 15px;
         border-radius: 5px;
 
         .commentChildItem {
           display: flex;
           margin-bottom: 20px;
+
+          .commentChildItemContent {
+            width: 100%;
+          }
 
           .avatar {
             width: 35px;
@@ -66,6 +101,16 @@
               height: 35px;
             }
           }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .viewMore {
+          margin-top: 10px;
+          cursor: pointer;
+          .clickNoSelectText();
         }
       }
     }
