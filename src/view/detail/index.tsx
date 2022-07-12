@@ -85,14 +85,7 @@ const ArticleDetail: React.FC = () => {
                   <div className={styles.tagList}>
                     <span className={styles.label}>标签：</span>
                     <div className={styles.tagItemWrap}>
-                      {[
-                        '标签1',
-                        '标签2',
-                        '标签3',
-                        '标签4',
-                        '标签5',
-                        '标签6',
-                      ].map((i) => (
+                      {['标签1', '标签2', '标签3', '标签4', '标签5', '标签6'].map((i) => (
                         <span className={styles.tag} key={i}>
                           {i}
                         </span>

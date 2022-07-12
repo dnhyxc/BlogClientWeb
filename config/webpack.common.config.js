@@ -51,8 +51,11 @@ module.exports = {
       },
       {
         test: /\.md$/,
+        type: 'asset/source',
         exclude: /node_modules/,
-        use: 'raw-loader',
+        generator: {
+          filename: 'assets/file/[name].[contenthash:8][ext]', // 指定打包后文件存放的文件夹和文件名
+        },
       },
     ],
   },

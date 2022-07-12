@@ -85,4 +85,5 @@ module.exports = merge(common, {
       overlay: false,
     },
   },
+  devtool: 'cheap-module-source-map',
 });
