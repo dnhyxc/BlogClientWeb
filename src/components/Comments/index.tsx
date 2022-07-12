@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from '@/components/Image';
 import ABOUTME from '@/assets/images/about_me.jpg';
 import Icons from '@/components/Icons';
@@ -7,9 +7,37 @@ import { comments } from '../../../mock';
 
 interface IProps {}
 
-console.log(comments, 'comments');
+interface ReplyParams {
+  commentId?: number;
+  uid: number;
+  avatarUrl: any;
+  date: string;
+  username: string;
+  fromUid: number;
+  fromUsername: string;
+  formContent: string;
+  replyContent: string;
+  likeCount: number;
+  replyCount: number;
+  author: number;
+}
 
 const Comments: React.FC<IProps> = () => {
+  const [viewMoreComments, setViewMoreComments] = useState<number[]>([]);
+
+  // 收集可以查看全部的commentId
+  const onViewMoreReply = (commentId: number) => {
+    setViewMoreComments([...viewMoreComments, commentId]);
+  };
+
+  // 判断viewMoreComments是否包含commentId，以此返回对应的replyList
+  const checkReplyList = (replyList: ReplyParams[], commentId: number) => {
+    if (viewMoreComments.includes(commentId)) {
+      return replyList;
+    }
+    return replyList.slice(0, 2);
+  };
+
   return (
     <div className={styles.Comments}>
       {comments &&
@@ -29,19 +57,19 @@ const Comments: React.FC<IProps> = () => {
                   <div className={styles.desc}>{i.content}</div>
                   <div className={styles.action}>
                     <Icons
-                      name="icon-dianzan"
+                      name="icon-good"
                       text={i.likeCount || '点赞'}
                       iconWrapClass={styles.iconWrap}
                     />
                     <Icons
-                      name="icon-xiaoxi"
+                      name="icon-comment"
                       text={i.replyCount || '回复'}
                       iconWrapClass={styles.iconWrap}
                     />
                   </div>
                   {i.replyList && i.replyList.length > 0 && (
                     <div className={styles.commentChild}>
-                      {i.replyList.slice(0, 2).map((j) => {
+                      {checkReplyList(i.replyList, i.commentId).map((j) => {
                         return (
                           <div className={styles.commentChildItem} key={j.uid}>
                             <div className={styles.avatar}>
@@ -52,9 +80,7 @@ const Comments: React.FC<IProps> = () => {
                                 <span className={styles.name}>
                                   {j.username}
                                   {j.author !== 0 && (
-                                    <span className={styles.isAuthor}>
-                                      (作者)
-                                    </span>
+                                    <span className={styles.isAuthor}>(作者)</span>
                                   )}
                                   {j.fromUsername && (
                                     <span className={styles.replyInfo}>
@@ -67,9 +93,7 @@ const Comments: React.FC<IProps> = () => {
                                 </span>
                                 <span className={styles.date}>{j.date}</span>
                               </div>
-                              <div className={styles.desc}>
-                                {j.replyContent}
-                              </div>
+                              <div className={styles.desc}>{j.replyContent}</div>
                               {j.formContent && (
                                 <div className={styles.formContent}>
                                   {`“${j.formContent}”`}
@@ -77,26 +101,30 @@ const Comments: React.FC<IProps> = () => {
                               )}
                               <div className={styles.action}>
                                 <Icons
-                                  name="icon-dianzan"
+                                  name="icon-good"
                                   text={j.likeCount || '点赞'}
                                   iconWrapClass={styles.iconWrap}
                                 />
                                 <Icons
-                                  name="icon-xiaoxi"
+                                  name="icon-comment"
                                   text={j.replyCount || '回复'}
                                   iconWrapClass={styles.iconWrap}
                                 />
                               </div>
-                              {i.replyList.length > 2 && (
-                                <div className={styles.viewMore}>
-                                  查看更多回复
-                                  <Icons name="icon-youjiantou" />
-                                </div>
-                              )}
                             </div>
                           </div>
                         );
                       })}
+                      {checkReplyList(i.replyList, i.commentId).length !==
+                        i.replyList.length && (
+                        <div
+                          className={styles.viewMore}
+                          onClick={() => onViewMoreReply(i.commentId)}
+                        >
+                          <span className={styles.viewText}>查看更多回复</span>
+                          <Icons name="icon-xiajiantou" />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

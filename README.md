@@ -723,16 +723,105 @@ declare module "*.css";
 
 > 加上上述定义之后，报错就会消失，重启项目看是否能正常运行。
 
-### 文件与字体引入配置
+### 图片与字体引入配置
 
 在开发过程中需要使用一些图片或者自定义字体，有的需求是直接引用静态服务器，有的是直接打包在工程中。所以需要对引入的图片后者字体做一些处理。
 
-#### 安装相关依赖
+#### 资源模块
 
-**url-loader**：url-loader 会将引入的文件进行编码，生成 DataURL，相当于把文件翻译成了一串字符串，再把这个字符串打包到 JavaScript。
+资源模块 (asset module) 是一种模块类型，它允许使用资源文件（字体，图标等）而**无需配置额外 loader**。
 
-```json
-yarn add file-loader url-loader -D
+在 webpack 5 之前，通常使用：
+
+- raw-loader 将文件导入为字符串。
+
+- url-loader 将文件作为 data URI 内联到 bundle 中。
+
+- file-loader 将文件发送到输出目录。
+
+资源模块类型(asset module type)，通过添加 4 种新的模块类型，来替换所有这些 loader：
+
+- asset/resource 发送一个单独的文件并导出 URL。之前通过使用 file-loader 实现。该配置可以用来加载图片资源或者 fonts 字体等，如加载 png、jpg、jpeg 或者 woff、woff2、eot、tff、otf 等。
+
+- asset/inline 导出一个资源的 data URI（base64 格式）。之前通过使用 url-loader 实现。该配置可以用来加载 svg 图。
+
+- asset/source 导出资源的源代码。之前通过使用 raw-loader 实现。该配置可以用来加载 text 等文本文件。
+
+- asset 在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。小于 8kb 的文件，将会被视为 inline 模块类型，否则会被视为 resource 模块类型，可以在 webpack 配置的 module rule 层级中设置 Rule.parser.dataUrlCondition.maxSize 选项来修改此条件：
+
+```js
+module: {
+  rules: [
+    test: /\.jpg$/,
+    type: 'asset',
+    parser: {
+      dataUrlCondition: {
+        maxSize: 4 * 1024 // 4kb
+      }
+    }
+  ]
+}
+
+```
+
+资源模块类型(asset module type) 基本配置：
+
+- parser：用于指定转 base64 的条件。
+
+- generator：用于指定文件打包输出的路径及文件名称。
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.(png|jpe?g|gif)$/i,
+      exclude: /node_modules/,
+      type: 'asset',
+      parser: {
+        dataUrlCondition: {
+          maxSize: 8 * 1024, // 8kb
+        },
+      },
+      generator: {
+        filename: 'assets/images/[name].[hash:6][ext]',
+      },
+    },
+  ];
+}
+```
+
+> 特别提示：上述加载图片、字体等资源的配置，不需要而外安装其它 loader。
+
+#### 修改 webpack.common.config.js
+
+```js
+module: {
+  // ...
+  rules: [
+    // ...
+    {
+      test: /\.(png|jpe?g|gif)$/i,
+      exclude: /node_modules/,
+      type: 'asset',
+      parser: {
+        dataUrlCondition: {
+          maxSize: 8 * 1024,
+        },
+      },
+      generator: {
+        filename: 'assets/images/[name].[contenthash:6][ext]',
+      },
+    },
+    {
+      test: /\.(ttf|woff|woff2|eot|otf)$/,
+      type: 'asset/resource',
+      exclude: /node_modules/,
+      generator: {
+        filename: 'assets/font/[name].[contenthash:8][ext]',
+      },
+    },
+  ];
+}
 ```
 
 #### 新建 assets/images 文件夹
@@ -759,7 +848,88 @@ const App = () => {
 export default App;
 ```
 
-> 设置完毕之后，重启项目看是否能正常显示图片。
+#### 修改 App.less 文件
+
+在 `App.less` 文件中设置背景图片样式：
+
+```css
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #efefef;
+  background: url('./assets/images/test.jpg');
+
+  .h2 {
+    color: skyblue;
+  }
+}
+```
+
+> 设置完毕之后，重启项目看 `App.tex` 及 `App.less` 中导入的图片是否都能正常显示图片。
+
+#### 图片资源打包特别说明
+
+如果打包图片资源时，依旧使用 `url-loader` 或者 `file-loader` 进行打包时，会导致在样式中采用 `background: url('./xxx')` 的方式导入背景图片失效，只能通过 js 导入背景图片才能生效，具体打包配置如下：
+
+```js
+module: {
+  // ...
+  rules: [
+    // ...
+    {
+      test: /\.(png|jpe?g|gif)$/i,
+      exclude: /node_modules/,
+      loader: 'url-loader',
+      options: {
+        name: '[name].[contenthash:8].[ext]',
+        outputPath: 'assets/images',
+        limit: 8192,
+      },
+    },
+  ];
+}
+```
+
+`App.less` 样式配置如下：
+
+```css
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #efefef;
+  background: url('./assets/images/test.jpg');
+
+  .h2 {
+    color: skyblue;
+  }
+}
+```
+
+`App.tsx` 内容如下：
+
+```js
+import React from 'react';
+import Home from './Home';
+import styles from './App.less';
+import TEST_IMG from './assets/images/test.jpg';
+
+const App = () => {
+  return (
+    <div className={styles.App}>
+      <h2 className={styles.h2}>hello word</h2>
+      <h2>hello TypeScript</h2>
+      <img src={TEST_IMG} alt="" />
+      <Home />
+    </div>
+  );
+};
+
+export default App;
+```
+
+> 此时启动项目，发现只有在 `App.tsx` 中导入的图片才嫩正常显示，而在 `App.less` 中导入的图片并未生效，此时查看打包出来的图片，发现在样式中打包出来的图片显示是一个二进制的图片无法显示。因此，**在 webpack5 中尽量使用资源模块去编译图片等资源**。
 
 ### 打包生成单独 css 文件
 
@@ -899,33 +1069,6 @@ module.exports = merge(common, {
 ```
 
 > 设置完毕之后，重新运行 `npm run build` 看样式是否被压缩。
-
-### 打包时排除没有用到的 CSS
-
-#### 安装所需插件
-
-```json
-yarn add purgecss-webpack-plugin glob -D
-```
-
-#### 更改 webpack.common.config.js
-
-在 `webpack.common.config.js` 中增加 `PurgeCSSPlugin` 相关的配置：
-
-```js
-const glob = require('glob');
-const PurgeCSSPlugin = require('purgecss-webpack-plugin');
-
-module.exports = {
-  plugins: [
-    // ...
-    // 排除无用的css
-    new PurgeCSSPlugin({
-      paths: glob.sync(path.join(__dirname, 'index.html')),
-    }),
-  ],
-};
-```
 
 ### 压缩 JS
 
@@ -1337,7 +1480,7 @@ npx eslint --init
 
 - 第六步选择：> Use a popular style guide。
 
-- 第七步选择：> Airbnb: https://github.com/airbnb/javascript。
+- 第七步选择：> Airbnb。
 
 - 第八步选择：> JSON。
 
@@ -1489,9 +1632,11 @@ yarn add husky -D
 
 执行如下命令生成 `.husky` 文件，并在该文件夹下生成 `pre-commit` 文件：
 
-> 注意：执行 npm set-script prepare "husky install" 之前，必须要先使用 git init 创建 .git 文件，否则将会执行失败。
+> 注意：执行下述命令之前，必须要先使用 git init 创建 .git 文件，否则将会执行失败。
 
 ```json
+npm run prepare
+
 npx husky add .husky/pre-commit "npm test"
 ```
 

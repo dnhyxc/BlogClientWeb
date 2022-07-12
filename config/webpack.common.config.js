@@ -28,11 +28,17 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif)$/i,
         exclude: /node_modules/,
-        loader: 'url-loader',
-        options: {
-          name: '[name].[contenthash:8].[ext]',
-          outputPath: 'assets/images',
-          limit: 8192,
+        type: 'asset',
+        parser: {
+          // 转base64的条件
+          dataUrlCondition: {
+            maxSize: 8 * 1024, // 8kb
+          },
+        },
+        generator: {
+          // 与output.assetModuleFilename是相同的,这个写法引入的时候也会添加好这个路径
+          filename: 'assets/images/[name].[contenthash:6][ext]',
+          // 打包后对资源的引入，文件命名已经有/img了
         },
       },
       {
@@ -40,7 +46,7 @@ module.exports = {
         type: 'asset/resource',
         exclude: /node_modules/,
         generator: {
-          filename: 'assets/fonts/[name]_[contenthash:8][ext]', // 指定打包后文件存放的文件夹和文件名
+          filename: 'assets/font/[name].[contenthash:8][ext]', // 指定打包后文件存放的文件夹和文件名
         },
       },
       {

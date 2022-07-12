@@ -14,7 +14,7 @@ import ABOUTME from '../src/assets/images/about_me.jpg';
 
 export const comments = [
   {
-    commentId: new Date().valueOf(),
+    commentId: 1,
     uid: 1,
     username: 'xixi',
     date: '2022-07-11',
@@ -28,7 +28,6 @@ export const comments = [
     replyList: [
       // 第二层:formId: 第一层uid，formContent: ''
       {
-        commentId: new Date().valueOf(),
         uid: 999999,
         avatarUrl: ABOUTME,
         date: '2022-07-12',
@@ -43,7 +42,6 @@ export const comments = [
       },
       // 第三层:fromId: 第二层uid，fromContent: 第二层回复内容
       {
-        commentId: new Date().valueOf(),
         uid: 3,
         avatarUrl: ABOUTME,
         date: '2022-07-13',
@@ -58,7 +56,6 @@ export const comments = [
       },
       // 第二层:formId: 第一层uid，formContent: ''
       {
-        commentId: new Date().valueOf(),
         uid: 4,
         avatarUrl: ABOUTME,
         date: '2022-07-14',
@@ -74,7 +71,7 @@ export const comments = [
     ],
   },
   {
-    commentId: new Date().valueOf(),
+    commentId: 2,
     uid: 5,
     username: 'yhyh',
     date: '2022-07-15',
@@ -87,7 +84,6 @@ export const comments = [
     fromUid: 0,
     replyList: [
       {
-        commentId: new Date().valueOf(),
         uid: 6,
         avatarUrl: ABOUTME,
         date: '2022-07-16',
@@ -101,7 +97,6 @@ export const comments = [
         author: 0,
       },
       {
-        commentId: new Date().valueOf(),
         uid: 7,
         avatarUrl: ABOUTME,
         date: '2022-07-16',
@@ -115,7 +110,6 @@ export const comments = [
         author: 0,
       },
       {
-        commentId: new Date().valueOf(),
         uid: 8,
         avatarUrl: ABOUTME,
         date: '2022-07-16',
@@ -129,7 +123,6 @@ export const comments = [
         author: 0,
       },
       {
-        commentId: new Date().valueOf(),
         uid: 9,
         avatarUrl: ABOUTME,
         username: 'hmhm',
@@ -143,7 +136,6 @@ export const comments = [
         author: 0,
       },
       {
-        commentId: new Date().valueOf(),
         uid: 10,
         avatarUrl: ABOUTME,
         date: '2022-07-16',
@@ -159,7 +151,7 @@ export const comments = [
     ],
   },
   {
-    commentId: new Date().valueOf(),
+    commentId: 3,
     uid: 11,
     avatarUrl: ABOUTME,
     username: 'cucuc',
@@ -173,7 +165,7 @@ export const comments = [
     replyList: [],
   },
   {
-    commentId: new Date().valueOf(),
+    commentId: 4,
     uid: 12,
     avatarUrl: ABOUTME,
     username: 'lslsl',
@@ -185,7 +177,6 @@ export const comments = [
     author: 0,
     replyList: [
       {
-        commentId: new Date().valueOf(),
         uid: 13,
         avatarUrl: ABOUTME,
         username: 'xrxr',
@@ -201,7 +192,7 @@ export const comments = [
     ],
   },
   {
-    commentId: new Date().valueOf(),
+    commentId: 5,
     uid: 13,
     avatarUrl: ABOUTME,
     username: 'ksksks',
