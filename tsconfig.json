@@ -23,6 +23,6 @@
       "@styles/*": ["src/styles/*"]
     }
   },
-  "include": ["./src/**/*", "./src/styles/**/*", "typescript.d.ts"],
+  "include": ["./src/**/*", "./src/styles/**/*", "src/typings/index.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

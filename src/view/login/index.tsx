@@ -7,13 +7,25 @@
  */
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'antd';
+import { register, login } from '@/service';
+import { normalizeResult } from '@/utils/tools';
+import { LoginData } from '@/typings/common';
 import styles from './index.less';
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const toDetail = () => {
-    navigate('home');
+  const toDetail = async () => {
+    const res = normalizeResult<LoginData>(
+      await login({ username: 'dnhyxc', password: 'dnh@061306141' })
+    );
+    if (res.success) {
+      console.log(res, 'res');
+      console.log(res.data, 'res');
+      navigate('home');
+    } else {
+      console.log(res);
+    }
   };
 
   return (

@@ -84,6 +84,12 @@ module.exports = merge(common, {
     client: {
       overlay: false,
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:9112',
+        changeOrigin: true,
+      },
+    },
   },
   devtool: 'cheap-module-source-map',
 });

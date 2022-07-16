@@ -5,19 +5,37 @@
  * @LastEditors: dnh
  * @FilePath: \src\view\home\index.tsx
  */
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from 'antd';
 import Content from '@/components/Content';
 import Header from '@/components/Header';
 import RightBar from '@/components/RightBar';
 import Card from '@/components/Card';
+import * as Server from '@/service';
+import { normalizeResult } from '@/utils/tools';
+import { ArticleList } from '@/typings/common';
 import { list } from '../../../mock';
 import styles from './index.less';
 
 const { Search } = Input;
 
-const Home = () => {
+interface IProps {}
+
+const Home: React.FC<IProps> = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getArticleList();
+  }, []);
+
+  // 获取文章列表
+  const getArticleList = async () => {
+    const res = normalizeResult<ArticleList>(await Server.getArticleList({ id: '1' }));
+    if (res.success) {
+      console.log(res.data);
+    }
+  };
 
   const toDetail = (id: string) => {
     navigate(`/detail/${id}`);
