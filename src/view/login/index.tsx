@@ -6,7 +6,7 @@
  * @FilePath: \src\view\login\index.tsx
  */
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { register, login } from '@/service';
 import { normalizeResult } from '@/utils/tools';
 import { LoginData } from '@/typings/common';
@@ -17,14 +17,12 @@ const Login = () => {
 
   const toDetail = async () => {
     const res = normalizeResult<LoginData>(
-      await login({ username: 'dnhyxc', password: 'dnh@061306141' })
+      await login({ username: 'dnhyxc', password: 'dnh@06130614' })
     );
     if (res.success) {
-      console.log(res, 'res');
-      console.log(res.data, 'res');
       navigate('home');
     } else {
-      console.log(res);
+      message.error(res.message);
     }
   };
 

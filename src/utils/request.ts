@@ -1,12 +1,8 @@
 import { message } from 'antd';
 import fetch from 'isomorphic-fetch';
 import { stringify } from 'query-string';
-// import { authAction, LOGIN_STATUS } from '@/models/auth';
 import { addGatewayPattern } from './urlTool';
 
-export type IRequestMethod = 'GET' | 'PUT' | 'POST' | 'DELETE';
-
-export const APIVERSION = 'v1';
 export interface ICheckStatusProps {
   response: Response;
   options?: any;
@@ -34,14 +30,12 @@ function checkRedirection(response: Response): boolean {
 
 function getErrorWithResponse(response: Response): ErrorWithResponse {
   const error: ErrorWithResponse = new Error(response.statusText);
-  console.log(error, 'error');
   error.response = response;
   error.message = JSON.stringify(response);
   return error;
 }
 
 function checkStatus({ response }: ICheckStatusProps): Response {
-  console.log(response, 'response');
   if (checkRedirection(response)) {
     throw getErrorWithResponse(response);
   } else if (response.status >= 200 && response.status < 300) {
@@ -120,11 +114,11 @@ export default function request(_url: string, options?: any): FetchResult {
       };
     })
     .catch((err: any) => {
-      console.log(err.response, 'err response');
       if (err && err.response) {
         return err.response
           .json()
           .then((data: any) => {
+            console.log(err.response, 'err response');
             if (err.response.status === 401 || err.response.status === 403) {
               message.error('401 | 403重定向了');
               // const urlIndex = (data.msg || '').indexOf('http');
@@ -159,7 +153,7 @@ export default function request(_url: string, options?: any): FetchResult {
               return null;
             } else {
               return {
-                err: new Error(data.msg || '系统异常'),
+                err: new Error(data.message || '系统异常'),
               };
             }
           })
@@ -213,8 +207,4 @@ export function del(url: string, params: any = {}) {
   return request(newUrl, {
     method: 'DELETE',
   });
-}
-
-export function addVersion(url: string) {
-  return `${url}/v1`;
 }
