@@ -1,7 +1,9 @@
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import fetch from 'isomorphic-fetch';
 import { stringify } from 'query-string';
 import { addGatewayPattern } from './urlTool';
+
+const { confirm } = Modal;
 
 export interface ICheckStatusProps {
   response: Response;
@@ -59,6 +61,32 @@ function parseJSON(response: Response) {
   return response.json();
 }
 
+let time = 5;
+let timer: any;
+
+const showConfirm = () => {
+  const timeModel = document.createElement('div');
+  timeModel.innerHTML = `
+    <span>登录已过期</span>
+    <span id="timer">${time}</span>
+    <span>秒后将跳转至登录页</span>
+  `;
+  timeModel.className = 'timeModel';
+  document.body.appendChild(timeModel);
+};
+
+// 使用匿名函数方法
+function countDown() {
+  if (time === 1) {
+    window.clearInterval(timer);
+    window.location.href = '/login';
+  } else {
+    time -= 1;
+    const timeBox = document.querySelector('#timer');
+    timeBox!.innerHTML = `${time}`;
+  }
+}
+
 export type FetchResult = Promise<{ err: Error | null; data: any }>;
 
 /**
@@ -103,7 +131,6 @@ export default function request(_url: string, options?: any): FetchResult {
     )
     .then(parseJSON)
     .then((data: any) => {
-      console.log(data, 'request');
       const { code } = data;
       if (code === 'SYSTEM_ERROR') {
         message.error('系统错误');
@@ -118,9 +145,12 @@ export default function request(_url: string, options?: any): FetchResult {
         return err.response
           .json()
           .then((data: any) => {
-            console.log(err.response, 'err response');
             if (err.response.status === 401 || err.response.status === 403) {
-              message.error('401 | 403重定向了');
+              // message.error('401 | 403重定向了');
+              showConfirm();
+              timer = setInterval(() => {
+                countDown();
+              }, 1000);
               // const urlIndex = (data.msg || '').indexOf('http');
               // let loginUrl = '';
               // if (urlIndex > -1) {

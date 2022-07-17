@@ -76,7 +76,7 @@ module.exports = merge(common, {
     ],
   },
   devServer: {
-    port: 9102,
+    port: 9012,
     compress: true,
     // 设置 browserHistory 路由模式时，防止出现404的情况
     historyApiFallback: true,
