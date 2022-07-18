@@ -13,7 +13,6 @@ export type Result<T> =
     };
 
 export function normalizeResult<T = any>(res: { err: Error | null; data: any }): Result<T> {
-  console.log(res, '<<<<<<<<<<<<<<<<<<');
   if (!res) {
     return {
       success: false,
@@ -24,7 +23,6 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
   }
 
   if (res.err) {
-    console.log(res.err, 'res.errres.errres.err');
     return {
       success: false,
       err: res.err,
@@ -35,11 +33,10 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
   let { data } = res;
 
   if (!data) {
-    console.log(data, 'res.data.data.data');
     return {
       success: false,
       err: new Error(''),
-      message: '',
+      message: '未知错误',
     };
   }
 
@@ -60,7 +57,6 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
    * 返回错误
    */
   if (data.success !== true) {
-    console.log(data, 'datadatadata??????');
     return {
       success: false,
       err: new Error(data.message),
@@ -80,8 +76,6 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
   ) {
     ({ data } = data);
   }
-
-  console.log(data, 'datadatadata??????');
 
   return {
     success: true,

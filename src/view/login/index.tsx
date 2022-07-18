@@ -17,12 +17,12 @@ const Login = () => {
 
   const toDetail = async () => {
     const res = normalizeResult<LoginData>(
-      await login({ username: 'dnhyxc', password: 'dnh@06130614' })
+      await login({ username: 'dnhyxc', password: 'dnh@061306141' })
     );
     if (res.success) {
       // navigate('home');
     } else {
-      message.error(res.message);
+      res.message && message.error(res.message);
     }
   };
 
