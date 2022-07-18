@@ -1,4 +1,4 @@
-import { post } from '@/utils/request';
+import { post, put } from '@/utils/request';
 import * as API from './api';
 
 export interface LoginParams {
@@ -13,6 +13,10 @@ export async function register(params: LoginParams) {
 
 export async function login(params: LoginParams) {
   const res = await post(API.LOGIN, params);
-  // const res = await post(API.LOGIN, params, true);
+  return res;
+}
+
+export async function updateInfo(params: LoginParams) {
+  const res = await put(API.UPDATE_INFO, {});
   return res;
 }

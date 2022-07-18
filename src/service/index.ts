@@ -1,4 +1,4 @@
-import { register, login } from './user';
+import { register, login, updateInfo } from './user';
 import { getArticleList } from './article';
 
 export const upload = (params: any) => {
@@ -6,4 +6,4 @@ export const upload = (params: any) => {
   return 'https://dnhyxc.gitee.io/img/dnhyxc.jpg';
 };
 
-export { register, login, getArticleList };
+export { register, login, updateInfo, getArticleList };

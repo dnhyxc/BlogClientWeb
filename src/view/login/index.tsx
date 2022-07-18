@@ -7,7 +7,7 @@
  */
 import { useNavigate } from 'react-router-dom';
 import { Button, message } from 'antd';
-import { register, login } from '@/service';
+import { register, login, updateInfo } from '@/service';
 import { normalizeResult } from '@/utils/tools';
 import { LoginData } from '@/typings/common';
 import styles from './index.less';
@@ -20,10 +20,17 @@ const Login = () => {
       await login({ username: 'dnhyxc', password: 'dnh@06130614' })
     );
     if (res.success) {
-      navigate('home');
+      // navigate('home');
     } else {
       message.error(res.message);
     }
+  };
+
+  const updateUserInfo = async () => {
+    const res = normalizeResult<any>(
+      await updateInfo({ username: 'dnhyxc', password: 'dnh@06130614' })
+    );
+    console.log(res, 'res>>>>>>>');
   };
 
   return (
@@ -33,6 +40,9 @@ const Login = () => {
           <div className={styles.list}>
             <Button type="primary" onClick={toDetail}>
               登陆
+            </Button>
+            <Button type="primary" onClick={updateUserInfo}>
+              修改用户信息
             </Button>
           </div>
         </div>
