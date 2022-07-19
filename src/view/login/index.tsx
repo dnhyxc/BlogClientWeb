@@ -9,28 +9,35 @@ import { useNavigate } from 'react-router-dom';
 import { Button, message } from 'antd';
 import { register, login, updateInfo } from '@/service';
 import { normalizeResult } from '@/utils/tools';
-import { LoginData } from '@/typings/common';
+import { LoginData, UpdateData } from '@/typings/common';
 import styles from './index.less';
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const toDetail = async () => {
+  const onLogin = async () => {
     const res = normalizeResult<LoginData>(
-      await login({ username: 'dnhyxc', password: 'dnh@061306141' })
+      await login({ username: 'dnhyxc', password: 'dnh@06130614' })
     );
     if (res.success) {
-      // navigate('home');
+      localStorage.setItem('token', res.data.token);
+      navigate('home');
     } else {
       res.message && message.error(res.message);
     }
   };
 
   const updateUserInfo = async () => {
-    const res = normalizeResult<any>(
-      await updateInfo({ username: 'dnhyxc', password: 'dnh@06130614' })
+    const res = normalizeResult<UpdateData>(
+      await updateInfo({ password: 'dnh@06130614' })
     );
-    console.log(res, 'res>>>>>>>');
+    if (res.success) {
+      message.success(res.message);
+      localStorage.removeItem('token');
+      navigate('/login');
+    } else {
+      message.error(res.message);
+    }
   };
 
   return (
@@ -38,7 +45,7 @@ const Login = () => {
       <div className={styles.wrap}>
         <div className={styles.content}>
           <div className={styles.list}>
-            <Button type="primary" onClick={toDetail}>
+            <Button type="primary" onClick={onLogin}>
               登陆
             </Button>
             <Button type="primary" onClick={updateUserInfo}>

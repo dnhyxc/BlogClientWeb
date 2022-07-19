@@ -4,6 +4,7 @@ export type Result<T> =
       code: string;
       data: T;
       response: any; // 原始数据
+      message: string;
     }
   | {
       success: false;
@@ -50,6 +51,7 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
       data: data as any,
       response: res.data,
       code: res.data.code,
+      message: res.data.message,
     };
   }
 
@@ -82,5 +84,6 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
     data,
     response: res.data,
     code: res.data.code,
+    message: res.data.message,
   };
 }

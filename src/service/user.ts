@@ -17,6 +17,6 @@ export async function login(params: LoginParams) {
 }
 
 export async function updateInfo(params: LoginParams) {
-  const res = await put(API.UPDATE_INFO, {});
+  const res = await put(API.UPDATE_INFO, params);
   return res;
 }

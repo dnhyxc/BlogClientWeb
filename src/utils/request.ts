@@ -1,9 +1,7 @@
-import { message, Modal } from 'antd';
+import commonStore, { Auth } from '@/store/common';
 import fetch from 'isomorphic-fetch';
 import { stringify } from 'query-string';
 import { addGatewayPattern } from './urlTool';
-
-const { confirm } = Modal;
 
 export interface ICheckStatusProps {
   response: Response;
@@ -12,6 +10,14 @@ export interface ICheckStatusProps {
 }
 interface ErrorWithResponse extends Error {
   response?: Response;
+}
+
+function setAuth(value: Auth) {
+  commonStore.setAuth({
+    ...commonStore.auth,
+    hasAuth: value.hasAuth,
+    redirectUrl: value.redirectUrl,
+  });
 }
 
 function checkRedirection(response: Response): boolean {
@@ -61,31 +67,24 @@ function parseJSON(response: Response) {
   return response.json();
 }
 
-let time = 5;
-let timer: any;
+function onRedirect() {
+  const { pathname } = window.location;
+  if (pathname !== '/login') {
+    showConfirm();
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 1500);
+  }
+}
 
 const showConfirm = () => {
   const timeModel = document.createElement('div');
   timeModel.innerHTML = `
-    <span>登录已过期</span>
-    <span id="timer">${time}</span>
-    <span>秒后将跳转至登录页</span>
+    <span>登录已过期稍后将跳转至登录页</span>
   `;
   timeModel.className = 'timeModel';
   document.body.appendChild(timeModel);
 };
-
-// 使用匿名函数方法
-function countDown() {
-  if (time === 1) {
-    window.clearInterval(timer);
-    window.location.href = '/login';
-  } else {
-    time -= 1;
-    const timeBox = document.querySelector('#timer');
-    timeBox!.innerHTML = `${time}`;
-  }
-}
 
 export type FetchResult = Promise<{ err: Error | null; data: any }>;
 
@@ -110,6 +109,7 @@ export default function request(_url: string, options?: any): FetchResult {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
@@ -117,6 +117,7 @@ export default function request(_url: string, options?: any): FetchResult {
       // NewOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
         ...newOptions.headers,
       };
     }
@@ -132,8 +133,8 @@ export default function request(_url: string, options?: any): FetchResult {
     .then(parseJSON)
     .then((data: any) => {
       const { code } = data;
-      if (code === 'SYSTEM_ERROR') {
-        message.error('系统错误');
+      if (code === 200) {
+        setAuth({ hasAuth: true });
       }
       return {
         data,
@@ -146,46 +147,19 @@ export default function request(_url: string, options?: any): FetchResult {
           .json()
           .then((data: any) => {
             if (err.response.status === 401 || err.response.status === 403) {
-              // message.error('401 | 403重定向了');
-              showConfirm();
-              timer = setInterval(() => {
-                countDown();
-              }, 1000);
-              // const urlIndex = (data.msg || '').indexOf('http');
-              // let loginUrl = '';
-              // if (urlIndex > -1) {
-              //   loginUrl = data.msg.slice(urlIndex);
-              // }
-
-              // if (
-              //   state.auth.loginStatus === LOGIN_STATUS.LOGGED &&
-              //   err.response.status === 401
-              // ) {
-              //   message.destroy();
-              //   message.error(
-              //     `${data.msg || '登录已过期'},您需要重新登录,稍后将跳转至首页`
-              //   );
-              //   setTimeout(() => {
-              //     window.location.href = loginUrl || '/app/login';
-              //   }, 2000);
-              // }
-
-              // store.dispatch(
-              //   authAction.reducers.save({
-              //     loginStatus:
-              //       err.response.status === 401
-              //         ? LOGIN_STATUS.NOAUTH
-              //         : LOGIN_STATUS.FORBIDDEN,
-              //     loginUrl,
-              //   })
-              // );
-            } else if (err.response.status === 200) {
-              return null;
-            } else {
+              // 重定向跳转
+              setAuth({ hasAuth: false, redirectUrl: '/login' });
+              onRedirect();
               return {
                 err: new Error(data.message || '系统异常'),
               };
             }
+            if (err.response.status === 200) {
+              return null;
+            }
+            return {
+              err: new Error(data.message || '系统异常'),
+            };
           })
           .catch((err: any) => {
             return {

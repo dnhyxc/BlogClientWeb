@@ -10,4 +10,7 @@ const CREATE = '/api/create';
 // 获取文章列表
 const LIST = '/api/list';
 
-export { REGISTER, LOGIN, UPDATE_INFO, CREATE, LIST };
+// 上传文件
+const UPLOAD = '/api/upload';
+
+export { REGISTER, LOGIN, UPDATE_INFO, CREATE, LIST, UPLOAD };
