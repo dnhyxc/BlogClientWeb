@@ -8,6 +8,7 @@ interface IProps {
   text?: string | number;
   className?: string;
   iconWrapClass?: string;
+  onClick?: () => void;
 }
 
 const Icons: React.FC<IProps> = ({
@@ -16,14 +17,17 @@ const Icons: React.FC<IProps> = ({
   name,
   className,
   iconWrapClass,
+  onClick,
 }) => {
   return (
-    <span className={classname(styles.Icons, iconWrapClass)}>
+    <span className={classname(styles.Icons, iconWrapClass)} onClick={onClick}>
       <span className={classname(className, `iconfont ${name}`)} />
-      <span className={styles.child}>
-        <span>{text}</span>
-        <span>{children}</span>
-      </span>
+      {(text || children) && (
+        <span className={styles.child}>
+          {text && <span>{text}</span>}
+          {children && <span>{children}</span>}
+        </span>
+      )}
     </span>
   );
 };

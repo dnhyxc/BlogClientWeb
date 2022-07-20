@@ -102,3 +102,5 @@ export const enum LOGIN_STATUS {
   NOAUTH,
   FORBIDDEN,
 }
+
+export const FILETYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
