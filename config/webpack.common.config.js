@@ -100,6 +100,7 @@ module.exports = {
     children: false,
     chunks: false,
     chunkModules: false,
+    assets: false,
   },
   resolve: {
     alias: {
