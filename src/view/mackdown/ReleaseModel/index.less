@@ -1,8 +1,18 @@
+@import "~@styles/common.less";
+
 .tagList {
   border: 1px solid red;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+
+  .tag{
+    padding: 2px 5px;
+    background-color: @background;
+    width: calc(20% - 5px);
+    margin-bottom: 10px;
+    margin-right: 5px;
+  }
 }
 
 .uploadImgWrap {

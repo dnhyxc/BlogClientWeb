@@ -17,7 +17,7 @@ interface IProps {
 
 const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
   const [filePath, setFilePath] = useState<string>(
-    'http://localhost:9112/4e817cd59c0217adb283a294c.jpg'
+    'http://localhost:9112/df149798ff04621917dae6000.jpg'
   );
   const [previewVisible, setPreviewVisible] = useState<boolean>(false);
 
@@ -77,7 +77,7 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
             </div>
           </Form.Item>
           <Form.Item label="标签">
-            <Select>
+            <Select placeholder="请选择标签">
               <Select.Option value="demo">Demo</Select.Option>
             </Select>
           </Form.Item>
@@ -112,7 +112,7 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
             )}
           </Form.Item>
           <Form.Item label="摘要">
-            <TextArea rows={3} autoSize={{ minRows: 3, maxRows: 10 }} maxLength={220} />
+            <TextArea placeholder="请输入文章摘要" rows={3} autoSize={{ minRows: 3, maxRows: 10 }} maxLength={220} />
           </Form.Item>
         </Form>
       </Drawer>
