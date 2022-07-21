@@ -104,3 +104,42 @@ export const enum LOGIN_STATUS {
 }
 
 export const FILETYPE = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+
+export const ARTICLE_CLASSIFY = [
+  '前端',
+  '后端',
+  '架构',
+  '开发工具',
+  '代码人生',
+  '前端框架',
+  '计算机',
+  '阅读',
+];
+
+export const ARTICLE_TAG = [
+  '前端',
+  '后端',
+  'JavaScript',
+  'Node.js',
+  'TypeScript',
+  '前端框架',
+  'React',
+  'Vue',
+  'Preact',
+  'Webpack',
+  'Koa.js',
+  '面试',
+  'Java',
+  '架构',
+  'CSS',
+  'HTML',
+  '数据结构',
+  '算法',
+  'GitHtb',
+  'Git',
+  '设计模式',
+  '数据库',
+  '项目部署',
+  'Docker',
+  'Nginx',
+];

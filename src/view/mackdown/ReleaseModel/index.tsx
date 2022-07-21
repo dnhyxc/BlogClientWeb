@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, Drawer, Select, Upload, Modal, message, Input, Button, Radio } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import Icons from '@/components/Icons';
-import { FILETYPE } from '@/constant';
+import useStore from '@/store';
+import * as Server from '@/service';
+import { normalizeResult } from '@/utils/tools';
+import { FILETYPE, ARTICLE_CLASSIFY, ARTICLE_TAG } from '@/constant';
+import { CreateArticleParams, CreateResult } from '@/typings/common';
 
 import styles from './index.less';
 
@@ -20,7 +25,9 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
   );
   const [previewVisible, setPreviewVisible] = useState<boolean>(false);
 
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+  const { create } = useStore();
 
   const onClose = () => {
     onCancel && onCancel();
@@ -38,7 +45,7 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
     return FILETYPE.includes(fileType) && isLt20M;
   };
 
-  const handleChange: UploadProps['onChange'] = ({ file }) => {
+  const onUploadFile: UploadProps['onChange'] = ({ file }) => {
     if (file.status === 'done') {
       const path = file.response.data.filePath;
       setFilePath(path);
@@ -61,11 +68,26 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
     setFilePath('');
   };
 
+  // 调用创建文章的接口
+  const createArticle = async (params: CreateArticleParams) => {
+    const res = normalizeResult<CreateResult>(await Server.createArticle(params));
+    if (res.success) {
+      message.success(res.message);
+      navigate('/home');
+    } else {
+      res.message && message.error(res.message);
+    }
+  };
+
   // 提交表单
   const onFinish = async () => {
     try {
       const values = await form.validateFields();
-      console.log(values);
+      createArticle({
+        ...values,
+        content: create.mackdown,
+        createTime: new Date().valueOf(),
+      });
     } catch (error) {
       console.log(error);
     }
@@ -94,15 +116,22 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
           name="form"
         >
           <Form.Item
+            label="标题"
+            name="title"
+            rules={[{ required: true, message: '请先输入文章标题！' }]}
+          >
+            <Input placeholder="请输入文章标题！" maxLength={50} />
+          </Form.Item>
+          <Form.Item
             label="分类"
             name="classify"
             rules={[{ required: true, message: '请选择分类！' }]}
           >
             <Radio.Group buttonStyle="solid">
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => {
+              {ARTICLE_CLASSIFY.map((i) => {
                 return (
-                  <Radio.Button className={styles.tag} key={i} value={`标签${i}`}>
-                    {`标签${i}`}
+                  <Radio.Button className={styles.tag} key={i} value={i}>
+                    {i}
                   </Radio.Button>
                 );
               })}
@@ -114,14 +143,11 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
             rules={[{ required: true, message: '请选择一个标签！' }]}
           >
             <Select placeholder="请选择标签">
-              <Select.Option value="React">React</Select.Option>
-              <Select.Option value="webpack">webpack</Select.Option>
-              <Select.Option value="Vue">Vue</Select.Option>
-              <Select.Option value="JavaScript">JavaScript</Select.Option>
-              <Select.Option value="TypeScript">TypeScript</Select.Option>
-              <Select.Option value="Koa">Koa</Select.Option>
-              <Select.Option value="MongoDB">MongoDB</Select.Option>
-              <Select.Option value="mongoose">mongoose</Select.Option>
+              {ARTICLE_TAG.map((i) => (
+                <Select.Option value={i} key={i}>
+                  {i}
+                </Select.Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item label="封面" valuePropName="fileList" name="coverImage">
@@ -132,7 +158,7 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
                 listType="picture-card"
                 showUploadList={false}
                 beforeUpload={beforeUpload}
-                onChange={handleChange}
+                onChange={onUploadFile}
                 className={styles.upload}
               >
                 {!filePath && <PlusOutlined />}
@@ -158,11 +184,10 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
           </Form.Item>
           <Form.Item
             label="摘要"
-            name="desc"
+            name="abstract"
             rules={[{ required: true, message: '请先输入文章摘要！' }]}
           >
             <TextArea
-              name="desc"
               placeholder="请输入文章摘要"
               rows={3}
               autoSize={{ minRows: 3, maxRows: 10 }}

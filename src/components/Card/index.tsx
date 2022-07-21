@@ -2,17 +2,11 @@ import React from 'react';
 import { Skeleton } from 'antd';
 import classname from 'classname';
 import IMAGE from '@/assets/images/about_me.jpg';
+import { ArticleListParams } from '@/typings/common';
 import styles from './index.less';
 
-interface ListParams {
-  id: string;
-  name: string;
-  desc: string;
-  date: string;
-}
-
 interface IProps {
-  list: ListParams[];
+  list: ArticleListParams[];
   toDetail?: Function;
   wrapClass?: string;
   itemClass?: string;
@@ -57,20 +51,18 @@ const Card: React.FC<IProps> = ({
               className={classname(styles.imgWrap, imgWrapClass)}
               style={bgcStyle(IMAGE)}
             >
-              <div className={styles.text}>{i.name}</div>
+              <div className={styles.text}>{i.title}</div>
             </div>
             <div className={styles.info}>
-              <div className={styles.name}>{i.name}</div>
-              <div className={descClass || styles.desc}>{i.desc}</div>
-              <div className={styles.date}>{i.date}</div>
+              <div className={styles.name}>{i.title}</div>
+              <div className={descClass || styles.desc}>{i.abstract}</div>
+              <div className={styles.date}>{i.createTime}</div>
             </div>
           </div>
         ))
       ) : (
         <div className={classname(styles.item, itemClass, styles.skeletonWrap)}>
-          <Skeleton.Image
-            className={classname(styles.skeletonAvatar, skeletonAvatar)}
-          />
+          <Skeleton.Image className={classname(styles.skeletonAvatar, skeletonAvatar)} />
           <Skeleton active paragraph={{ rows: skeletonRows }} />
         </div>
       )}

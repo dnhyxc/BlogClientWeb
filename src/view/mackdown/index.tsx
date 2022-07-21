@@ -5,7 +5,6 @@ import useStore from '@/store';
 import Header from '@/components/Header';
 import Content from '@/components/Content';
 import TuiEditor from '@/components/TuiEditor';
-import * as Server from '@/service';
 import ReleaseModel from './ReleaseModel';
 
 import styles from './index.less';
@@ -18,14 +17,6 @@ const CreateArticle: React.FC<IProps> = () => {
 
   const onGetMackdown = (mackdown: any) => {
     create.createMackdown(mackdown);
-  };
-
-  const onUploadFile = async () => {
-    const res = await Server.upload({
-      file: '',
-    });
-
-    console.log(res, 'res');
   };
 
   const renderRight = () => {

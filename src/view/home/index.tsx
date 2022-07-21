@@ -5,7 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\view\home\index.tsx
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from 'antd';
 import Content from '@/components/Content';
@@ -14,7 +14,7 @@ import RightBar from '@/components/RightBar';
 import Card from '@/components/Card';
 import * as Server from '@/service';
 import { normalizeResult } from '@/utils/tools';
-import { ArticleList } from '@/typings/common';
+import { ArticleListParams } from '@/typings/common';
 import { list } from '../../../mock';
 import styles from './index.less';
 
@@ -23,6 +23,8 @@ const { Search } = Input;
 interface IProps {}
 
 const Home: React.FC<IProps> = () => {
+  const [articleList, setArticleList] = useState<ArticleListParams[]>([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,9 +33,11 @@ const Home: React.FC<IProps> = () => {
 
   // 获取文章列表
   const getArticleList = async () => {
-    const res = normalizeResult<ArticleList>(await Server.getArticleList({ id: '1' }));
+    const res = normalizeResult<ArticleListParams[]>(
+      await Server.getArticleList({ pageNo: 1, pageSize: 20 })
+    );
     if (res.success) {
-      console.log(res.data);
+      setArticleList(res.data);
     }
   };
 
@@ -60,7 +64,7 @@ const Home: React.FC<IProps> = () => {
       </Header>
       <Content className={styles.contentWrap}>
         <div className={styles.content}>
-          <Card list={list} toDetail={toDetail} />
+          <Card list={articleList} toDetail={toDetail} />
           <RightBar className={styles.rightbar} />
         </div>
       </Content>

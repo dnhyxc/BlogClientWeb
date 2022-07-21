@@ -7,16 +7,18 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Affix, BackTop, Spin } from 'antd';
+import { Affix, BackTop, Spin, message } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import Preview from '@/components/Preview';
 import Header from '@/components/Header';
 import Image from '@/components/Image';
-import { getMackdownById } from '@/controller/index';
 import RightBar from '@/components/RightBar';
 import Toc from '@/components/ArticleToc';
 import DraftInput from '@/components/DraftInput';
 import Comments from '@/components/Comments';
+import * as Server from '@/service';
+import { normalizeResult } from '@/utils/tools';
+import { ArticleDetailParams } from '@/typings/common';
 import styles from './index.less';
 
 interface DetailParams {
@@ -28,27 +30,34 @@ interface DetailParams {
 }
 
 const ArticleDetail: React.FC = () => {
-  const [detail, setDetail] = useState<DetailParams>({
-    name: '',
-    desc: '',
-    mackdown: '',
-    date: '',
-    img: '',
-  });
+  const [detail, setDetail] = useState<ArticleDetailParams>();
 
   const { id } = useParams();
 
+  console.log(id, 'id');
+
   useEffect(() => {
-    const res = getMackdownById(id);
-    setDetail(res?.detail!);
+    getArticleDetail();
   }, [id]);
 
-  const renderCoverImg = (data: DetailParams) => {
+  const getArticleDetail = async () => {
+    const res = normalizeResult<ArticleDetailParams>(
+      await Server.getArticleDetail({ id: id! })
+    );
+    console.log(res);
+    if (res.success) {
+      setDetail(res.data);
+    } else {
+      message.error(res.message);
+    }
+  };
+
+  const renderCoverImg = (title: string, url: string, desc: string) => {
     return (
       <div className={styles.titleWrap}>
-        <div className={styles.title}>{data.name}</div>
-        {data.img && <Image url={data.img} className={styles.image} />}
-        <p className={styles.desc}>{data.desc}</p>
+        <div className={styles.title}>{title}</div>
+        {url && <Image url={url} className={styles.image} />}
+        <p className={styles.desc}>{desc}</p>
       </div>
     );
   };
@@ -65,31 +74,33 @@ const ArticleDetail: React.FC = () => {
         </div>
         <div className={styles.content}>
           <div className={styles.preview}>
-            {detail.mackdown ? (
+            {detail ? (
               <Preview
                 className={styles.previewContent}
-                mackdown={detail?.mackdown}
-                coverImg={renderCoverImg(detail!)}
+                mackdown={detail.content}
+                coverImg={renderCoverImg(detail.title, detail.coverImage, detail.abstract)}
               >
                 <div className={styles.tagWrap}>
                   <div className={styles.tagList}>
                     <span className={styles.label}>分类：</span>
                     <div className={styles.tagItemWrap}>
-                      {['前端', '后端'].map((i) => (
+                      {/* {['前端', '后端'].map((i) => (
                         <span className={styles.tag} key={i}>
                           {i}
                         </span>
-                      ))}
+                      ))} */}
+                      <span className={styles.tag}>{detail.classify}</span>
                     </div>
                   </div>
                   <div className={styles.tagList}>
                     <span className={styles.label}>标签：</span>
                     <div className={styles.tagItemWrap}>
-                      {['标签1', '标签2', '标签3', '标签4', '标签5', '标签6'].map((i) => (
+                      {/* {['标签1', '标签2', '标签3', '标签4', '标签5', '标签6'].map((i) => (
                         <span className={styles.tag} key={i}>
                           {i}
                         </span>
-                      ))}
+                      ))} */}
+                      <span className={styles.tag}>{detail.tag}</span>
                     </div>
                   </div>
                 </div>
@@ -109,9 +120,11 @@ const ArticleDetail: React.FC = () => {
           </div>
           <div className={styles.rightBar}>
             <RightBar />
-            <Affix offsetTop={50}>
-              <Toc mackdown={detail?.mackdown} />
-            </Affix>
+            {detail && (
+              <Affix offsetTop={50}>
+                <Toc mackdown={detail.content} />
+              </Affix>
+            )}
           </div>
         </div>
       </div>
