@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Drawer, Select, Upload, Modal, message, Input } from 'antd';
+import { Form, Drawer, Select, Upload, Modal, message, Input, Button, Radio } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/es/upload';
-import type { UploadFile } from 'antd/es/upload/interface';
 import Icons from '@/components/Icons';
 import { FILETYPE } from '@/constant';
 
@@ -17,20 +16,14 @@ interface IProps {
 
 const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
   const [filePath, setFilePath] = useState<string>(
-    'http://localhost:9112/df149798ff04621917dae6000.jpg'
+    'http://localhost:9112/8453fc0ad0741ef1814deee02.jpg'
   );
   const [previewVisible, setPreviewVisible] = useState<boolean>(false);
 
+  const [form] = Form.useForm();
+
   const onClose = () => {
     onCancel && onCancel();
-  };
-
-  const handleChange: UploadProps['onChange'] = ({ file }) => {
-    if (file.status === 'done') {
-      const path = file.response.data.filePath;
-      setFilePath(path);
-      message.success(file.response.message);
-    }
   };
 
   const beforeUpload = (file: RcFile) => {
@@ -43,6 +36,15 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
       message.error('请上传小于20M的图片');
     }
     return FILETYPE.includes(fileType) && isLt20M;
+  };
+
+  const handleChange: UploadProps['onChange'] = ({ file }) => {
+    if (file.status === 'done') {
+      const path = file.response.data.filePath;
+      setFilePath(path);
+      form.setFieldsValue({ coverImage: path });
+      message.success(file.response.message);
+    }
   };
 
   // 预览图片
@@ -59,60 +61,114 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
     setFilePath('');
   };
 
+  // 提交表单
+  const onFinish = async () => {
+    try {
+      const values = await form.validateFields();
+      console.log(values);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className={styles.ReleaseModel}>
       <Drawer
-        title="Basic Drawer"
+        title="发布文章"
         placement="right"
+        width={500}
         closable={false}
         onClose={onClose}
         visible={visible}
+        extra={
+          <Button type="primary" onClick={onFinish}>
+            发布
+          </Button>
+        }
       >
-        <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} layout="horizontal">
-          <Form.Item label="分类">
-            <div className={styles.tagList}>
+        <Form
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 22 }}
+          layout="horizontal"
+          form={form}
+          name="form"
+        >
+          <Form.Item
+            label="分类"
+            name="classify"
+            rules={[{ required: true, message: '请选择分类！' }]}
+          >
+            <Radio.Group buttonStyle="solid">
               {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => {
-                return <span key={i} className={styles.tag}>{`分类${i}`}</span>;
+                return (
+                  <Radio.Button className={styles.tag} key={i} value={`标签${i}`}>
+                    {`标签${i}`}
+                  </Radio.Button>
+                );
               })}
-            </div>
+            </Radio.Group>
           </Form.Item>
-          <Form.Item label="标签">
+          <Form.Item
+            label="标签"
+            name="tag"
+            rules={[{ required: true, message: '请选择一个标签！' }]}
+          >
             <Select placeholder="请选择标签">
-              <Select.Option value="demo">Demo</Select.Option>
+              <Select.Option value="React">React</Select.Option>
+              <Select.Option value="webpack">webpack</Select.Option>
+              <Select.Option value="Vue">Vue</Select.Option>
+              <Select.Option value="JavaScript">JavaScript</Select.Option>
+              <Select.Option value="TypeScript">TypeScript</Select.Option>
+              <Select.Option value="Koa">Koa</Select.Option>
+              <Select.Option value="MongoDB">MongoDB</Select.Option>
+              <Select.Option value="mongoose">mongoose</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item label="封面" valuePropName="fileList">
-            <Upload
-              name="file"
-              action="/api/upload"
-              listType="picture-card"
-              showUploadList={false}
-              beforeUpload={beforeUpload}
-              onChange={handleChange}
-              className={styles.upload}
-            >
-              {!filePath && <PlusOutlined />}
-            </Upload>
-            {filePath && (
-              <div className={styles.uploadImgWrap}>
-                <div className={styles.mark}>
-                  <Icons
-                    name="icon-browse"
-                    className={styles.iconWrap}
-                    onClick={onPreview}
-                  />
-                  <Icons
-                    name="icon-shanchu"
-                    className={styles.iconWrap}
-                    onClick={onDeleteFile}
-                  />
+          <Form.Item label="封面" valuePropName="fileList" name="coverImage">
+            <>
+              <Upload
+                name="file"
+                action="/api/upload"
+                listType="picture-card"
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                onChange={handleChange}
+                className={styles.upload}
+              >
+                {!filePath && <PlusOutlined />}
+              </Upload>
+              {filePath && (
+                <div className={styles.uploadImgWrap}>
+                  <div className={styles.mark}>
+                    <Icons
+                      name="icon-browse"
+                      className={styles.iconWrap}
+                      onClick={onPreview}
+                    />
+                    <Icons
+                      name="icon-shanchu"
+                      className={styles.iconWrap}
+                      onClick={onDeleteFile}
+                    />
+                  </div>
+                  <img className={styles.uploadImg} src={filePath} alt="" />
                 </div>
-                <img className={styles.uploadImg} src={filePath} alt="" />
-              </div>
-            )}
+              )}
+            </>
           </Form.Item>
-          <Form.Item label="摘要">
-            <TextArea placeholder="请输入文章摘要" rows={3} autoSize={{ minRows: 3, maxRows: 10 }} maxLength={220} />
+          <Form.Item
+            label="摘要"
+            name="desc"
+            rules={[{ required: true, message: '请先输入文章摘要！' }]}
+          >
+            <TextArea
+              name="desc"
+              placeholder="请输入文章摘要"
+              rows={3}
+              autoSize={{ minRows: 3, maxRows: 10 }}
+              maxLength={100}
+              showCount
+            />
           </Form.Item>
         </Form>
       </Drawer>
