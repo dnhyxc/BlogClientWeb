@@ -7,6 +7,7 @@
  */
 import { useNavigate } from 'react-router-dom';
 import { Button, message } from 'antd';
+import useStore from '@/store';
 import { register, login, updateInfo } from '@/service';
 import { normalizeResult } from '@/utils/tools';
 import { LoginData, UpdateData } from '@/typings/common';
@@ -14,12 +15,20 @@ import styles from './index.less';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { userInfoStore } = useStore();
 
   const onLogin = async () => {
     const res = normalizeResult<LoginData>(
       await login({ username: 'dnhyxc', password: 'dnh@06130614' })
     );
     if (res.success) {
+      const { id, username, avatar } = res.data;
+      // 将登录信息保存到store中
+      userInfoStore.setUserInfo({
+        userId: id,
+        username,
+        avatar,
+      });
       localStorage.setItem('token', res.data.token);
       navigate('home');
     } else {
@@ -28,9 +37,7 @@ const Login = () => {
   };
 
   const updateUserInfo = async () => {
-    const res = normalizeResult<UpdateData>(
-      await updateInfo({ password: 'dnh@06130614' })
-    );
+    const res = normalizeResult<UpdateData>(await updateInfo({ password: 'dnh@06130614' }));
     if (res.success) {
       message.success(res.message);
       localStorage.removeItem('token');

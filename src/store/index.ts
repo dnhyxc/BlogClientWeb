@@ -10,6 +10,7 @@ import { createContext, useContext } from 'react';
 import detailMobx from './detail';
 import createMobx from './create';
 import commonStore from './common';
+import UserInfo from './user';
 
 class RootStore {
   detail = detailMobx;
@@ -17,6 +18,8 @@ class RootStore {
   create = createMobx;
 
   commonStore = commonStore;
+
+  userInfoStore = UserInfo;
 }
 
 const store = new RootStore();

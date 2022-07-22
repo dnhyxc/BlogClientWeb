@@ -84,22 +84,12 @@ const ArticleDetail: React.FC = () => {
                   <div className={styles.tagList}>
                     <span className={styles.label}>分类：</span>
                     <div className={styles.tagItemWrap}>
-                      {/* {['前端', '后端'].map((i) => (
-                        <span className={styles.tag} key={i}>
-                          {i}
-                        </span>
-                      ))} */}
                       <span className={styles.tag}>{detail.classify}</span>
                     </div>
                   </div>
                   <div className={styles.tagList}>
                     <span className={styles.label}>标签：</span>
                     <div className={styles.tagItemWrap}>
-                      {/* {['标签1', '标签2', '标签3', '标签4', '标签5', '标签6'].map((i) => (
-                        <span className={styles.tag} key={i}>
-                          {i}
-                        </span>
-                      ))} */}
                       <span className={styles.tag}>{detail.tag}</span>
                     </div>
                   </div>
@@ -113,10 +103,12 @@ const ArticleDetail: React.FC = () => {
             <div className={styles.draftInputWrap}>
               <DraftInput />
             </div>
-            <div className={styles.commentList}>
-              <div className={styles.title}>全部评论</div>
-              <Comments />
-            </div>
+            {detail && (
+              <div className={styles.commentList}>
+                <div className={styles.title}>全部评论</div>
+                <Comments comments={detail.comments} />
+              </div>
+            )}
           </div>
           <div className={styles.rightBar}>
             <RightBar />

@@ -14,6 +14,10 @@ const CREATE_ARTICLE = '/api/createArticle';
 const ARTICLE_LIST = '/api/articleList';
 // 获取文章详情
 const ARTICLE_DETAIL = '/api/articleDetail';
+// 评论
+const COMMENTS = '/api/comments';
+// 获取评论
+const GET_COMMENT_LIST = '/api/getCommentList';
 
 export {
   REGISTER,
@@ -23,4 +27,6 @@ export {
   CREATE_ARTICLE,
   UPLOAD,
   ARTICLE_DETAIL,
+  COMMENTS,
+  GET_COMMENT_LIST,
 };

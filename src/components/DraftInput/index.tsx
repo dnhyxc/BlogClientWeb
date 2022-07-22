@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input } from 'antd';
+import { useParams } from 'react-router-dom';
 import classname from 'classname';
+import useStore from '@/store';
+import * as Service from '@/service';
 import Image from '@/components/Image';
 import ABOUTME from '@/assets/images/about_me.jpg';
 import styles from './index.less';
@@ -11,6 +14,19 @@ interface IProps {}
 
 const DraftInput: React.FC<IProps> = () => {
   const [showIcon, setShowIcon] = useState<boolean>(false);
+  const [keyword, setKeyword] = useState<string>('');
+
+  const { id } = useParams();
+  const {
+    userInfoStore: { getUserInfo },
+  } = useStore();
+
+  const userInfo = getUserInfo;
+
+  if (userInfo) {
+    console.log(userInfo.userId);
+    console.log(userInfo.username);
+  }
 
   useEffect(() => {
     window.addEventListener('click', onClickNode);
@@ -24,6 +40,23 @@ const DraftInput: React.FC<IProps> = () => {
 
   const onFocus = () => {
     setShowIcon(true);
+  };
+
+  const onCommentChange = (e: any) => {
+    setKeyword(e.target.value);
+  };
+
+  // 发布评论
+  const submitComment = async () => {
+    const params = {
+      ...userInfo,
+      articleId: id || '',
+      date: new Date().valueOf(),
+      content: keyword,
+    };
+
+    const res = await Service.releaseComment(params);
+    console.log(res, 'res');
   };
 
   return (
@@ -43,16 +76,14 @@ const DraftInput: React.FC<IProps> = () => {
               className={styles.textArea}
               onFocus={onFocus}
               id="TEXTAREA_WRAP"
+              onChange={onCommentChange}
             />
           </div>
           {showIcon && (
             <div className={styles.emojiWrap} id="EMOJI_WRAP">
               <div id="ICONFONT" className={styles.iconfontWrap}>
                 <span
-                  className={classname(
-                    styles.iconfont,
-                    'iconfont icon-biaoqing-xue'
-                  )}
+                  className={classname(styles.iconfont, 'iconfont icon-biaoqing-xue')}
                   id="BIAOQING_XUE"
                 >
                   <span id="BIAOQING_XUE" className={styles.iconText}>
@@ -60,10 +91,7 @@ const DraftInput: React.FC<IProps> = () => {
                   </span>
                 </span>
                 <span
-                  className={classname(
-                    styles.iconfont,
-                    'iconfont icon-charutupian'
-                  )}
+                  className={classname(styles.iconfont, 'iconfont icon-charutupian')}
                   id="CHARUTUPIAN"
                 >
                   <span id="CHARUTUPIAN" className={styles.iconText}>
@@ -75,7 +103,7 @@ const DraftInput: React.FC<IProps> = () => {
                 <span id="ENTER" className={styles.enter}>
                   Ctrl + Enter
                 </span>
-                <Button id="BTN" type="primary">
+                <Button id="BTN" type="primary" onClick={submitComment}>
                   <span id="BTN">发表评论</span>
                 </Button>
               </div>

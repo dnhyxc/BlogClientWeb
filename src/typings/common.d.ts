@@ -2,6 +2,7 @@ export interface LoginData {
   username: string;
   token: string;
   id: string;
+  avatar?: string;
 }
 
 export interface UpdateData {
@@ -44,4 +45,20 @@ export interface ArticleDetailParams {
   coverImage: string;
   abstract: string;
   createTime: number;
+  comments: CommentParams[];
+}
+
+export interface CommentParams {
+  articleId: string;
+  userId: string;
+  username: string;
+  date: number;
+  content?: string;
+  fromUserId?: string;
+  likeCount?: number;
+  replyCount?: number;
+  replyContent?: string;
+  fromUsername?: string;
+  formContent?: string;
+  replyList?: CommentParams[];
 }
