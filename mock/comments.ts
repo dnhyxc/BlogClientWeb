@@ -1,17 +1,6 @@
 // @ts-ignore
 import ABOUTME from '../src/assets/images/about_me.jpg';
 
-/**
- * 第一层区别方式
- *  - formId: 0，formContent: ''
- *
- * 第二层：
- *  - formId: 第一层uid，formContent: ''
- *
- * 第三层：
- *  - fromId: 第二层uid，fromContent: 第二层回复内容
- */
-
 export const comments = [
   {
     commentId: 1,

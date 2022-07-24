@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
+import { Button, message } from 'antd';
 import Image from '@/components/Image';
 import useStore from '@/store';
 import ABOUTME from '@/assets/images/about_me.jpg';
 import Icons from '@/components/Icons';
 import * as Service from '@/service';
 import { normalizeResult } from '@/utils/tools';
-import { CommentParams } from '@/typings/common';
+import { formatDate } from '@/utils';
+import { CommentParams, GiveLikeResult, DeleteCommentResult } from '@/typings/common';
+import DraftInput from '../DraftInput';
 import styles from './index.less';
-// import { comments } from '../../../mock';
 
 interface IProps {
   comments: CommentParams[];
+  authorId: string;
+  getCommentList?: Function;
 }
 
-const Comments: React.FC<IProps> = ({ comments }) => {
+const Comments: React.FC<IProps> = ({ comments, getCommentList, authorId }) => {
   const [viewMoreComments, setViewMoreComments] = useState<string[]>([]);
+  const [selectComment, setSelectComment] = useState<CommentParams>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     userInfoStore: { getUserInfo },
   } = useStore();
-
-  // 获取评论列表
 
   // 收集可以查看全部的commentId
   const onViewMoreReply = (commentId: string) => {
@@ -35,7 +39,60 @@ const Comments: React.FC<IProps> = ({ comments }) => {
     return replyList.slice(0, 2);
   };
 
-  console.log(comments, 'comments');
+  // 点击回复按钮事件
+  const onReplay = (comment: CommentParams, status: boolean) => {
+    if (status) {
+      setSelectComment({} as any);
+    } else {
+      setSelectComment(comment);
+    }
+  };
+
+  // 隐藏回复输入框
+  const onHideInput = () => {
+    setSelectComment({} as any);
+  };
+
+  // 点赞接口
+  const onGiveLike = async (comment: CommentParams, isThreeTier?: boolean) => {
+    if (loading) return;
+    const params = isThreeTier
+      ? {
+          commentId: comment.commentId!,
+          fromCommentId: comment.commentId!,
+          userId: getUserInfo?.userId,
+        }
+      : {
+          commentId: comment.commentId!,
+          userId: getUserInfo?.userId,
+        };
+    setLoading(true);
+    const res = normalizeResult<GiveLikeResult>(await Service.giveLike(params));
+    if (res.success) {
+      setLoading(false);
+      getCommentList && getCommentList();
+    } else {
+      message.error(res.message);
+    }
+  };
+
+  // 删除评论
+  const onDeleteComment = async (comment: CommentParams, isThreeTier?: boolean) => {
+    const params = isThreeTier
+      ? {
+          commentId: comment.commentId!,
+          fromCommentId: comment.commentId!,
+        }
+      : {
+          commentId: comment.commentId!,
+        };
+    const res = normalizeResult<DeleteCommentResult>(await Service.deleteComment(params));
+    if (res.success) {
+      getCommentList && getCommentList();
+    } else {
+      message.error(res.message);
+    }
+  };
 
   return (
     <div className={styles.Comments}>
@@ -43,92 +100,175 @@ const Comments: React.FC<IProps> = ({ comments }) => {
         comments.length > 0 &&
         comments.map((i) => {
           return (
-            <div className={styles.commentWrap} key={i.articleId}>
+            <div className={styles.commentWrap} key={i.commentId}>
               <div className={styles.avatar}>
                 <Image url={ABOUTME} className={styles.image} />
               </div>
               <div className={styles.commentContent}>
-                <div className={styles.commentItem}>
+                <div className={styles.commentMain}>
                   <div className={styles.userInfo}>
                     <span className={styles.name}>{i.username}</span>
-                    <span className={styles.date}>{i.date}</span>
+                    <span className={styles.date}>{formatDate(i.date)}</span>
                   </div>
                   <div className={styles.desc}>{i.content}</div>
                   <div className={styles.action}>
-                    <Icons
-                      name="icon-good"
-                      text={i.likeCount || '点赞'}
-                      iconWrapClass={styles.iconWrap}
-                    />
-                    <Icons
-                      name="icon-comment"
-                      text={i.replyCount || '回复'}
-                      iconWrapClass={styles.iconWrap}
-                    />
-                  </div>
-                  {i.replyList && i.replyList.length > 0 && (
-                    <div className={styles.commentChild}>
-                      {checkReplyList(i.replyList, i.articleId).map((j) => {
-                        return (
-                          <div className={styles.commentChildItem} key={j.userId}>
-                            <div className={styles.avatar}>
-                              <Image url={ABOUTME} className={styles.image} />
-                            </div>
-                            <div className={styles.commentChildItemContent}>
-                              <div className={styles.userInfo}>
-                                <span className={styles.name}>
-                                  {j.username}
-                                  {j.userId !== getUserInfo.userId && (
-                                    <span className={styles.isAuthor}>(作者)</span>
-                                  )}
-                                  {j.fromUsername && (
-                                    <span className={styles.replyInfo}>
-                                      回复
-                                      <span className={styles.fromUsername}>
-                                        {j.fromUsername}
-                                      </span>
-                                    </span>
-                                  )}
-                                </span>
-                                <span className={styles.date}>{j.date}</span>
-                              </div>
-                              {j.replyContent && (
-                                <div className={styles.desc}>{j.replyContent}</div>
-                              )}
-                              {j.formContent && (
-                                <div className={styles.formContent}>
-                                  {`“${j.formContent}”`}
-                                </div>
-                              )}
-                              <div className={styles.action}>
-                                <Icons
-                                  name="icon-good"
-                                  text={j.likeCount || '点赞'}
-                                  iconWrapClass={styles.iconWrap}
-                                />
-                                <Icons
-                                  name="icon-comment"
-                                  text={j.replyCount || '回复'}
-                                  iconWrapClass={styles.iconWrap}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {checkReplyList(i.replyList, i.articleId).length !==
-                        i.replyList.length && (
-                        <div
-                          className={styles.viewMore}
-                          onClick={() => onViewMoreReply(i.articleId)}
+                    <div className={styles.actionContent}>
+                      <div className={styles.likeAndReplay}>
+                        <Icons
+                          name="icon-good"
+                          text={i.likeCount! > 0 ? i.likeCount : '点赞'}
+                          iconWrapClass={styles.iconWrap}
+                          onClick={() => onGiveLike(i)}
+                        />
+                        <Icons
+                          name="icon-comment"
+                          className={
+                            selectComment?.commentId === i.commentId
+                              ? styles.cancelReplay
+                              : null
+                          }
+                          text={
+                            i.replyCount || selectComment?.commentId === i.commentId ? (
+                              <span className={styles.cancelReplay} id="ON_REPLAY">
+                                取消回复
+                              </span>
+                            ) : (
+                              <span>回复</span>
+                            )
+                          }
+                          iconWrapClass={styles.iconWrap}
+                          onClick={() =>
+                            onReplay(i, selectComment?.commentId === i.commentId)
+                          }
+                        />
+                      </div>
+                      {getUserInfo?.userId === i.userId && (
+                        <Button
+                          type="link"
+                          className={styles.deleteComment}
+                          onClick={() => onDeleteComment(i)}
                         >
-                          <span className={styles.viewText}>查看更多回复</span>
-                          <Icons name="icon-xiajiantou" />
-                        </div>
+                          删除
+                        </Button>
                       )}
                     </div>
-                  )}
+                    {selectComment?.commentId === i.commentId && (
+                      <DraftInput
+                        showAvatar={false}
+                        className={styles.draftContent}
+                        selectComment={selectComment}
+                        onReplay={onReplay}
+                        getCommentList={getCommentList}
+                        onHideInput={onHideInput}
+                      />
+                    )}
+                  </div>
                 </div>
+                {i.replyList && i.replyList.length > 0 && (
+                  <div className={styles.commentChild}>
+                    {checkReplyList(i.replyList, i.commentId!).map((j) => {
+                      return (
+                        <div className={styles.commentChildItem} key={j.commentId}>
+                          <div className={styles.avatar}>
+                            <Image url={ABOUTME} className={styles.image} />
+                          </div>
+                          <div className={styles.commentChildItemContent}>
+                            <div className={styles.userInfo}>
+                              <span className={styles.name}>
+                                {j.username}
+                                {j.userId === authorId && (
+                                  <span className={styles.isAuthor}>(作者)</span>
+                                )}
+                                {j.fromUsername && (
+                                  <span className={styles.replyInfo}>
+                                    回复
+                                    <span className={styles.fromUsername}>
+                                      {j.fromUsername}
+                                    </span>
+                                  </span>
+                                )}
+                              </span>
+                              <span className={styles.date}>{formatDate(j.date)}</span>
+                            </div>
+                            {j.content && <div className={styles.desc}>{j.content}</div>}
+                            {j.formContent && (
+                              <div className={styles.formContent}>
+                                {`“${j.formContent}”`}
+                              </div>
+                            )}
+                            <div className={styles.action} id="ON_REPLAY">
+                              <div className={styles.actionContent}>
+                                <div className={styles.likeAndReplay}>
+                                  <Icons
+                                    name="icon-good"
+                                    text={j.likeCount! > 0 ? j.likeCount : '点赞'}
+                                    iconWrapClass={styles.iconWrap}
+                                    onClick={() => onGiveLike(j, true)}
+                                  />
+                                  <Icons
+                                    name="icon-comment"
+                                    className={
+                                      selectComment?.commentId === j.commentId
+                                        ? styles.cancelReplay
+                                        : null
+                                    }
+                                    text={
+                                      i.replyCount ||
+                                      selectComment?.commentId === j.commentId ? (
+                                        <span
+                                          className={styles.cancelReplay}
+                                          id="ON_REPLAY"
+                                        >
+                                          取消回复
+                                        </span>
+                                      ) : (
+                                        <span>回复</span>
+                                      )
+                                    }
+                                    iconWrapClass={styles.iconWrap}
+                                    onClick={() =>
+                                      onReplay(j, selectComment?.commentId === j.commentId)
+                                    }
+                                  />
+                                </div>
+                                {getUserInfo?.userId === j.userId && (
+                                  <Button
+                                    type="link"
+                                    className={styles.deleteComment}
+                                    onClick={() => onDeleteComment(j, true)}
+                                  >
+                                    删除
+                                  </Button>
+                                )}
+                              </div>
+                              {selectComment?.commentId === j.commentId && (
+                                <DraftInput
+                                  showAvatar={false}
+                                  className={styles.draftContent}
+                                  selectComment={selectComment}
+                                  isThreeTier
+                                  onReplay={onReplay}
+                                  getCommentList={getCommentList}
+                                  onHideInput={onHideInput}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {checkReplyList(i.replyList, i.commentId!).length !==
+                      i.replyList.length && (
+                      <div
+                        className={styles.viewMore}
+                        onClick={() => onViewMoreReply(i.commentId!)}
+                      >
+                        <span className={styles.viewText}>查看更多回复</span>
+                        <Icons name="icon-xiajiantou" />
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );

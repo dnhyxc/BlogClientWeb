@@ -7,7 +7,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Affix, BackTop, Spin, message } from 'antd';
+import { Affix, BackTop, Spin, message, Alert } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import Preview from '@/components/Preview';
 import Header from '@/components/Header';
@@ -16,37 +16,46 @@ import RightBar from '@/components/RightBar';
 import Toc from '@/components/ArticleToc';
 import DraftInput from '@/components/DraftInput';
 import Comments from '@/components/Comments';
-import * as Server from '@/service';
+import useStore from '@/store';
+import * as Service from '@/service';
 import { normalizeResult } from '@/utils/tools';
-import { ArticleDetailParams } from '@/typings/common';
+import { ArticleDetailParams, CommentParams } from '@/typings/common';
 import styles from './index.less';
-
-interface DetailParams {
-  name: string;
-  desc: string;
-  mackdown: any;
-  date: string;
-  img: string;
-}
 
 const ArticleDetail: React.FC = () => {
   const [detail, setDetail] = useState<ArticleDetailParams>();
+  const [comments, setComments] = useState<CommentParams[]>([]);
 
   const { id } = useParams();
 
-  console.log(id, 'id');
+  const {
+    userInfoStore: { getUserInfo },
+    commonStore: { auth },
+  } = useStore();
+
+  console.log(auth, 'auth');
 
   useEffect(() => {
     getArticleDetail();
+    getCommentList();
   }, [id]);
 
   const getArticleDetail = async () => {
     const res = normalizeResult<ArticleDetailParams>(
-      await Server.getArticleDetail({ id: id! })
+      await Service.getArticleDetail({ id: id! })
     );
-    console.log(res);
     if (res.success) {
       setDetail(res.data);
+    } else {
+      message.error(res.message);
+    }
+  };
+
+  // 获取评论列表
+  const getCommentList = async () => {
+    const res = normalizeResult<CommentParams[]>(await Service.getCommentList({ id: id! }));
+    if (res.success) {
+      setComments(res.data);
     } else {
       message.error(res.message);
     }
@@ -65,6 +74,9 @@ const ArticleDetail: React.FC = () => {
   return (
     <>
       <div className={styles.detailContainer}>
+        {!getUserInfo?.userId && auth.noLogin && (
+          <Alert message="Warning Text" type="warning" closable className={styles.alert} />
+        )}
         <div className={styles.headerWrap}>
           <Header needLeft needMenu excludesWidth>
             <div className={styles.headerContent}>
@@ -101,12 +113,16 @@ const ArticleDetail: React.FC = () => {
               </div>
             )}
             <div className={styles.draftInputWrap}>
-              <DraftInput />
+              <DraftInput getCommentList={getCommentList} focus={false} />
             </div>
-            {detail && (
+            {comments.length > 0 && detail && (
               <div className={styles.commentList}>
                 <div className={styles.title}>全部评论</div>
-                <Comments comments={detail.comments} />
+                <Comments
+                  comments={comments}
+                  authorId={detail.authorId}
+                  getCommentList={getCommentList}
+                />
               </div>
             )}
           </div>

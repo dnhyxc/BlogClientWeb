@@ -1,5 +1,13 @@
 import { register, login, updateInfo } from './user';
-import { getArticleList, createArticle, getArticleDetail, releaseComment } from './article';
+import {
+  getArticleList,
+  createArticle,
+  getArticleDetail,
+  releaseComment,
+  getCommentList,
+  giveLike,
+  deleteComment,
+} from './article';
 
 export const upload = (params: any) => {
   console.log(params, 'params');
@@ -14,4 +22,7 @@ export {
   createArticle,
   getArticleDetail,
   releaseComment,
+  getCommentList,
+  giveLike,
+  deleteComment,
 };

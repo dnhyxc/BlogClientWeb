@@ -1,6 +1,7 @@
 import React from 'react';
 import { Skeleton } from 'antd';
 import classname from 'classname';
+import { formatDate } from '@/utils';
 import IMAGE from '@/assets/images/about_me.jpg';
 import { ArticleListParams } from '@/typings/common';
 import styles from './index.less';
@@ -56,7 +57,7 @@ const Card: React.FC<IProps> = ({
             <div className={styles.info}>
               <div className={styles.name}>{i.title}</div>
               <div className={descClass || styles.desc}>{i.abstract}</div>
-              <div className={styles.date}>{i.createTime}</div>
+              <div className={styles.date}>{formatDate(i.createTime)}</div>
             </div>
           </div>
         ))

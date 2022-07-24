@@ -22,12 +22,23 @@
     }
 
     .iconWrap {
+      &:hover {
+        color: @menu-active;
+      }
       cursor: pointer;
       .clickNoSelectText();
     }
 
     .commentContent {
       flex: 1;
+
+      .commentMain {
+        &:hover {
+          .deleteComment {
+            display: block;
+          }
+        }
+      }
 
       .userInfo {
         display: flex;
@@ -70,8 +81,32 @@
         border-radius: 5px;
       }
 
+      .deleteComment {
+        display: none;
+        padding: 0;
+      }
+
       .action {
         margin-top: 10px;
+
+        .actionContent {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .likeAndReplay {
+            height: 32px;
+            line-height: 32px;
+          }
+        }
+
+        .draftContent {
+          padding-left: 0;
+        }
+
+        .cancelReplay {
+          color: @menu-active;
+        }
       }
 
       .commentChild {
@@ -86,6 +121,12 @@
 
           .commentChildItemContent {
             width: 100%;
+
+            &:hover {
+              .deleteComment {
+                display: block;
+              }
+            }
           }
 
           .avatar {

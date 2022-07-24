@@ -5,6 +5,7 @@ export interface Auth {
   isAdmin?: boolean;
   redirectUrl?: string;
   hasAuth?: boolean;
+  noLogin?: boolean;
 }
 
 class CommonStore {
@@ -17,6 +18,7 @@ class CommonStore {
     isAdmin: false,
     hasAuth: false,
     redirectUrl: '/login',
+    noLogin: false,
   };
 
   setAuth(value: Auth) {

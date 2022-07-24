@@ -27,7 +27,10 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { create } = useStore();
+  const {
+    create,
+    userInfoStore: { getUserInfo },
+  } = useStore();
 
   const onClose = () => {
     onCancel && onCancel();
@@ -87,6 +90,7 @@ const ReleaseModel: React.FC<IProps> = ({ visible = true, onCancel }) => {
         ...values,
         content: create.mackdown,
         createTime: new Date().valueOf(),
+        authorId: getUserInfo.userId,
       });
     } catch (error) {
       console.log(error);

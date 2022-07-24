@@ -5,7 +5,7 @@ import styles from './index.less';
 interface IProps {
   children?: ReactNode;
   name?: string;
-  text?: string | number;
+  text?: string | number | ReactNode;
   className?: string;
   iconWrapClass?: string;
   onClick?: () => void;
@@ -20,7 +20,11 @@ const Icons: React.FC<IProps> = ({
   onClick,
 }) => {
   return (
-    <span className={classname(styles.Icons, iconWrapClass)} onClick={onClick}>
+    <span
+      className={classname(styles.Icons, iconWrapClass)}
+      id="ON_REPLAY"
+      onClick={onClick}
+    >
       <span className={classname(className, `iconfont ${name}`)} />
       {(text || children) && (
         <span className={styles.child}>
