@@ -23,12 +23,15 @@ const Icons: React.FC<IProps> = ({
     <span
       className={classname(styles.Icons, iconWrapClass)}
       id="ON_REPLAY"
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick && onClick();
+      }}
     >
       <span className={classname(className, `iconfont ${name}`)} />
       {(text || children) && (
         <span className={styles.child}>
-          {text && <span>{text}</span>}
+          {text && <span style={{ fontSize: '13px' }}>{text}</span>}
           {children && <span>{children}</span>}
         </span>
       )}

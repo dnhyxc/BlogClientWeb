@@ -120,12 +120,12 @@ const DraftInput: React.FC<IProps> = ({
 
     if (res.success) {
       getAlertStatus && getAlertStatus(false);
+      getCommentList && getCommentList();
     } else {
       getAlertStatus && getAlertStatus(true);
     }
 
     onReplay && onReplay({}, true);
-    getCommentList && getCommentList();
     setKeyword('');
     setShowIcon(false);
   };

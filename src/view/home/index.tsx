@@ -7,12 +7,12 @@
  */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input } from 'antd';
+import { Input, message, Modal } from 'antd';
 import Content from '@/components/Content';
 import Header from '@/components/Header';
 import RightBar from '@/components/RightBar';
 import Card from '@/components/Card';
-import * as Server from '@/service';
+import * as Service from '@/service';
 import { normalizeResult } from '@/utils/tools';
 import { ArticleListParams } from '@/typings/common';
 import { list } from '../../../mock';
@@ -34,15 +34,35 @@ const Home: React.FC<IProps> = () => {
   // 获取文章列表
   const getArticleList = async () => {
     const res = normalizeResult<ArticleListParams[]>(
-      await Server.getArticleList({ pageNo: 1, pageSize: 20 })
+      await Service.getArticleList({ pageNo: 1, pageSize: 20 })
     );
     if (res.success) {
       setArticleList(res.data);
     }
   };
 
-  const toDetail = (id: string) => {
+  const toDetail = (e: any, id: string) => {
+    e.preventDefault();
     navigate(`/detail/${id}`);
+  };
+
+  // 删除文章
+  const deleteArticle = (articleId: string) => {
+    Modal.confirm(modalConfig(articleId));
+  };
+
+  const modalConfig = (articleId: string) => {
+    return {
+      title: '确定删除该评论吗？',
+      async onOk() {
+        const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId }));
+        if (res.success) {
+          getArticleList();
+        } else {
+          message.error(res.message);
+        }
+      },
+    };
   };
 
   const onSearch = (value: string) => {
@@ -64,7 +84,7 @@ const Home: React.FC<IProps> = () => {
       </Header>
       <Content className={styles.contentWrap}>
         <div className={styles.content}>
-          <Card list={articleList} toDetail={toDetail} />
+          <Card list={articleList} toDetail={toDetail} deleteArticle={deleteArticle} />
           <RightBar className={styles.rightbar} />
         </div>
       </Content>

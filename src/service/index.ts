@@ -7,6 +7,7 @@ import {
   getCommentList,
   giveLike,
   deleteComment,
+  deleteArticle,
 } from './article';
 
 export const upload = (params: any) => {
@@ -25,4 +26,5 @@ export {
   getCommentList,
   giveLike,
   deleteComment,
+  deleteArticle,
 };

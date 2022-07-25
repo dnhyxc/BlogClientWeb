@@ -35,6 +35,7 @@ export interface ArticleListParams {
   title: string;
   abstract: string;
   createTime: number;
+  authorId: string;
 }
 
 export interface ArticleDetailParams {

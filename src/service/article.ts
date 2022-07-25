@@ -7,6 +7,11 @@ export async function createArticle(params: CreateArticleParams) {
   return res;
 }
 
+export async function deleteArticle(params: { articleId: string }) {
+  const res = await post(API.DELETE_ARTICLE, params);
+  return res;
+}
+
 export async function getArticleList(params: GetArticleListParams) {
   const res = await post(API.ARTICLE_LIST, params);
   return res;

@@ -14,6 +14,8 @@ const CREATE_ARTICLE = '/api/createArticle';
 const ARTICLE_LIST = '/api/articleList';
 // 获取文章详情
 const ARTICLE_DETAIL = '/api/articleDetail';
+// 获取文章详情
+const DELETE_ARTICLE = '/api/deleteArticle';
 
 // 评论
 const COMMENTS = '/api/comments';
@@ -21,7 +23,7 @@ const COMMENTS = '/api/comments';
 const GET_COMMENT_LIST = '/api/getCommentList';
 // 点赞
 const GIVE_LIKE = '/api/giveLike';
-// 点赞
+// 删除评论
 const DELETE_COMMENT = '/api/deleteComment';
 
 export {
@@ -36,4 +38,5 @@ export {
   GET_COMMENT_LIST,
   GIVE_LIKE,
   DELETE_COMMENT,
+  DELETE_ARTICLE,
 };
