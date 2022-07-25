@@ -17,7 +17,6 @@ function setAuth(value: Auth) {
     ...commonStore.auth,
     hasAuth: value.hasAuth,
     noLogin: value.noLogin,
-    redirectUrl: value.redirectUrl,
   });
 }
 
@@ -149,8 +148,14 @@ export default function request(_url: string, options?: any): FetchResult {
           .then((data: any) => {
             if (err.response.status === 401 || err.response.status === 403) {
               // 重定向跳转
-              setAuth({ hasAuth: false, redirectUrl: '/login', noLogin: true });
+              setAuth({ hasAuth: false, noLogin: true });
               onRedirect();
+              return {
+                err: new Error(data.message || '系统异常'),
+              };
+            }
+            if (err.response.status === 409) {
+              setAuth({ hasAuth: false, noLogin: true });
               return {
                 err: new Error(data.message || '系统异常'),
               };

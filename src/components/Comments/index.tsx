@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Modal } from 'antd';
 import Image from '@/components/Image';
 import useStore from '@/store';
 import ABOUTME from '@/assets/images/about_me.jpg';
@@ -15,9 +15,15 @@ interface IProps {
   comments: CommentParams[];
   authorId: string;
   getCommentList?: Function;
+  getAlertStatus?: Function;
 }
 
-const Comments: React.FC<IProps> = ({ comments, getCommentList, authorId }) => {
+const Comments: React.FC<IProps> = ({
+  comments,
+  getCommentList,
+  authorId,
+  getAlertStatus,
+}) => {
   const [viewMoreComments, setViewMoreComments] = useState<string[]>([]);
   const [selectComment, setSelectComment] = useState<CommentParams>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -71,13 +77,14 @@ const Comments: React.FC<IProps> = ({ comments, getCommentList, authorId }) => {
     if (res.success) {
       setLoading(false);
       getCommentList && getCommentList();
+      getAlertStatus && getAlertStatus(false);
     } else {
-      message.error(res.message);
+      getAlertStatus && getAlertStatus(true);
     }
   };
 
   // 删除评论
-  const onDeleteComment = async (comment: CommentParams, isThreeTier?: boolean) => {
+  const onDeleteComment = (comment: CommentParams, isThreeTier?: boolean) => {
     const params = isThreeTier
       ? {
           commentId: comment.commentId!,
@@ -86,6 +93,19 @@ const Comments: React.FC<IProps> = ({ comments, getCommentList, authorId }) => {
       : {
           commentId: comment.commentId!,
         };
+    Modal.confirm(modalConfig(params));
+  };
+
+  const modalConfig = (params: { commentId: string; fromCommentId?: string }) => {
+    return {
+      title: '确定删除该评论吗？',
+      async onOk() {
+        deleteComment(params);
+      },
+    };
+  };
+
+  const deleteComment = async (params: { commentId: string; fromCommentId?: string }) => {
     const res = normalizeResult<DeleteCommentResult>(await Service.deleteComment(params));
     if (res.success) {
       getCommentList && getCommentList();
@@ -160,6 +180,7 @@ const Comments: React.FC<IProps> = ({ comments, getCommentList, authorId }) => {
                         onReplay={onReplay}
                         getCommentList={getCommentList}
                         onHideInput={onHideInput}
+                        getAlertStatus={getAlertStatus}
                       />
                     )}
                   </div>
@@ -250,6 +271,7 @@ const Comments: React.FC<IProps> = ({ comments, getCommentList, authorId }) => {
                                   onReplay={onReplay}
                                   getCommentList={getCommentList}
                                   onHideInput={onHideInput}
+                                  getAlertStatus={getAlertStatus}
                                 />
                               )}
                             </div>

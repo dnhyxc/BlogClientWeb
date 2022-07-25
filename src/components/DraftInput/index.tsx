@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Input, message } from 'antd';
+import { Button, Input, Alert } from 'antd';
 import { useParams } from 'react-router-dom';
 import classname from 'classname';
 import useStore from '@/store';
@@ -20,6 +20,7 @@ interface IProps {
   onReplay?: Function;
   getCommentList?: Function;
   onHideInput?: Function;
+  getAlertStatus?: Function;
   focus?: boolean;
 }
 
@@ -32,6 +33,7 @@ const DraftInput: React.FC<IProps> = ({
   getCommentList,
   onHideInput,
   focus = true,
+  getAlertStatus,
 }) => {
   const [showIcon, setShowIcon] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
@@ -42,7 +44,6 @@ const DraftInput: React.FC<IProps> = ({
 
   const {
     userInfoStore: { getUserInfo },
-    commonStore,
   } = useStore();
 
   useEffect(() => {
@@ -118,15 +119,15 @@ const DraftInput: React.FC<IProps> = ({
     const res = normalizeResult<ReplayCommentResult>(await Service.releaseComment(params));
 
     if (res.success) {
-      onReplay && onReplay({}, true);
-      getCommentList && getCommentList();
-      setKeyword('');
-      setShowIcon(false);
+      getAlertStatus && getAlertStatus(false);
     } else {
-      commonStore.setAuth({
-        noLogin: true,
-      });
+      getAlertStatus && getAlertStatus(true);
     }
+
+    onReplay && onReplay({}, true);
+    getCommentList && getCommentList();
+    setKeyword('');
+    setShowIcon(false);
   };
 
   return (

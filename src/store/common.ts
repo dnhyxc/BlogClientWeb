@@ -22,7 +22,7 @@ class CommonStore {
   };
 
   setAuth(value: Auth) {
-    this.auth = value;
+    this.auth = { ...this.auth, ...value };
   }
 }
 

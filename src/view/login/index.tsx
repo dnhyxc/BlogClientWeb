@@ -15,7 +15,7 @@ import styles from './index.less';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { userInfoStore } = useStore();
+  const { userInfoStore, commonStore } = useStore();
 
   const onLogin = async () => {
     const res = normalizeResult<LoginData>(
@@ -30,7 +30,7 @@ const Login = () => {
         avatar,
       });
       localStorage.setItem('token', res.data.token);
-      navigate('home');
+      navigate(`${commonStore.auth.redirectUrl}`);
     } else {
       res.message && message.error(res.message);
     }

@@ -6,8 +6,8 @@
  * @FilePath: \src\view\detail\index.tsx
  */
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Affix, BackTop, Spin, message, Alert } from 'antd';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Affix, BackTop, Spin, message, Alert, Button } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import Preview from '@/components/Preview';
 import Header from '@/components/Header';
@@ -16,8 +16,8 @@ import RightBar from '@/components/RightBar';
 import Toc from '@/components/ArticleToc';
 import DraftInput from '@/components/DraftInput';
 import Comments from '@/components/Comments';
-import useStore from '@/store';
 import * as Service from '@/service';
+import useStore from '@/store';
 import { normalizeResult } from '@/utils/tools';
 import { ArticleDetailParams, CommentParams } from '@/typings/common';
 import styles from './index.less';
@@ -25,15 +25,16 @@ import styles from './index.less';
 const ArticleDetail: React.FC = () => {
   const [detail, setDetail] = useState<ArticleDetailParams>();
   const [comments, setComments] = useState<CommentParams[]>([]);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const {
     userInfoStore: { getUserInfo },
-    commonStore: { auth },
+    commonStore,
   } = useStore();
-
-  console.log(auth, 'auth');
 
   useEffect(() => {
     getArticleDetail();
@@ -61,6 +62,15 @@ const ArticleDetail: React.FC = () => {
     }
   };
 
+  const getAlertStatus = (status: boolean) => {
+    setShowAlert(status);
+  };
+
+  const toLogin = () => {
+    commonStore.setAuth({ redirectUrl: pathname });
+    navigate('/login');
+  };
+
   const renderCoverImg = (title: string, url: string, desc: string) => {
     return (
       <div className={styles.titleWrap}>
@@ -74,8 +84,21 @@ const ArticleDetail: React.FC = () => {
   return (
     <>
       <div className={styles.detailContainer}>
-        {!getUserInfo?.userId && auth.noLogin && (
-          <Alert message="Warning Text" type="warning" closable className={styles.alert} />
+        {!getUserInfo?.userId && showAlert && (
+          <Alert
+            message={
+              <div>
+                您尚未登录，暂时无权操作，请前往
+                <Button type="link" className={styles.toLogin} onClick={toLogin}>
+                  登录
+                </Button>
+                后再试！
+              </div>
+            }
+            type="warning"
+            closable
+            className={styles.alert}
+          />
         )}
         <div className={styles.headerWrap}>
           <Header needLeft needMenu excludesWidth>
@@ -113,7 +136,11 @@ const ArticleDetail: React.FC = () => {
               </div>
             )}
             <div className={styles.draftInputWrap}>
-              <DraftInput getCommentList={getCommentList} focus={false} />
+              <DraftInput
+                getCommentList={getCommentList}
+                focus={false}
+                getAlertStatus={getAlertStatus}
+              />
             </div>
             {comments.length > 0 && detail && (
               <div className={styles.commentList}>
@@ -122,6 +149,7 @@ const ArticleDetail: React.FC = () => {
                   comments={comments}
                   authorId={detail.authorId}
                   getCommentList={getCommentList}
+                  getAlertStatus={getAlertStatus}
                 />
               </div>
             )}
