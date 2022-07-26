@@ -135,9 +135,12 @@ const Comments: React.FC<IProps> = ({
                     <div className={styles.actionContent}>
                       <div className={styles.likeAndReplay}>
                         <Icons
-                          name="icon-good"
+                          name={`${
+                            i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
+                          }`}
                           text={i.likeCount! > 0 ? i.likeCount : '点赞'}
                           iconWrapClass={styles.iconWrap}
+                          className={i.isLike ? styles.isLike : null}
                           onClick={() => onGiveLike(i)}
                         />
                         <Icons
@@ -148,12 +151,12 @@ const Comments: React.FC<IProps> = ({
                               : null
                           }
                           text={
-                            i.replyCount || selectComment?.commentId === i.commentId ? (
+                            selectComment?.commentId === i.commentId ? (
                               <span className={styles.cancelReplay} id="ON_REPLAY">
                                 取消回复
                               </span>
                             ) : (
-                              <span>回复</span>
+                              <span>{i.replyList?.length || '回复'}</span>
                             )
                           }
                           iconWrapClass={styles.iconWrap}
@@ -221,7 +224,7 @@ const Comments: React.FC<IProps> = ({
                               <div className={styles.actionContent}>
                                 <div className={styles.likeAndReplay}>
                                   <Icons
-                                    name="icon-good"
+                                    name="icon-24gl-thumbsUp2"
                                     text={j.likeCount! > 0 ? j.likeCount : '点赞'}
                                     iconWrapClass={styles.iconWrap}
                                     onClick={() => onGiveLike(j, true)}
@@ -234,7 +237,6 @@ const Comments: React.FC<IProps> = ({
                                         : null
                                     }
                                     text={
-                                      i.replyCount ||
                                       selectComment?.commentId === j.commentId ? (
                                         <span
                                           className={styles.cancelReplay}

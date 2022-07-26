@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3511354 */
-  src: url('iconfont.woff2?t=1657608922838') format('woff2'),
-       url('iconfont.woff?t=1657608922838') format('woff'),
-       url('iconfont.ttf?t=1657608922838') format('truetype');
+  src: url('iconfont.woff2?t=1658820502631') format('woff2'),
+       url('iconfont.woff?t=1658820502631') format('woff'),
+       url('iconfont.ttf?t=1658820502631') format('truetype');
 }
 
 .iconfont {
@@ -13,12 +13,52 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-add:before {
-  content: "\e66a";
+.icon-gengduo2:before {
+  content: "\e660";
 }
 
-.icon-bad:before {
-  content: "\e66b";
+.icon-gengduo3:before {
+  content: "\ec1c";
+}
+
+.icon-gengduo4:before {
+  content: "\e8af";
+}
+
+.icon-gengduo1:before {
+  content: "\e606";
+}
+
+.icon-31shoucangxuanzhong:before {
+  content: "\e600";
+}
+
+.icon-31shoucang:before {
+  content: "\e601";
+}
+
+.icon-31guanzhu1xuanzhong:before {
+  content: "\e602";
+}
+
+.icon-31guanzhu1:before {
+  content: "\e605";
+}
+
+.icon-24gl-thumbsUp2:before {
+  content: "\eb32";
+}
+
+.icon-24gf-thumbsUp2:before {
+  content: "\eb33";
+}
+
+.icon-favorite-filling:before {
+  content: "\e68d";
+}
+
+.icon-add:before {
+  content: "\e66a";
 }
 
 .icon-chart-pie:before {
@@ -171,10 +211,6 @@
 
 .icon-full-screen:before {
   content: "\ed50";
-}
-
-.icon-aixin:before {
-  content: "\e67f";
 }
 
 .icon-bianji:before {
