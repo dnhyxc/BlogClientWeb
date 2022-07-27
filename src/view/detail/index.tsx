@@ -31,10 +31,7 @@ const ArticleDetail: React.FC = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const {
-    userInfoStore: { getUserInfo },
-    commonStore,
-  } = useStore();
+  const { commonStore } = useStore();
 
   useEffect(() => {
     getArticleDetail();
@@ -82,9 +79,9 @@ const ArticleDetail: React.FC = () => {
   };
 
   return (
-    <>
+    <div>
       <div className={styles.detailContainer}>
-        {!getUserInfo?.userId && showAlert && (
+        {showAlert && (
           <Alert
             message={
               <div>
@@ -169,7 +166,7 @@ const ArticleDetail: React.FC = () => {
           <ArrowUpOutlined className={styles.topIcon} />
         </div>
       </BackTop>
-    </>
+    </div>
   );
 };
 

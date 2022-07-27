@@ -224,7 +224,11 @@ const Comments: React.FC<IProps> = ({
                               <div className={styles.actionContent}>
                                 <div className={styles.likeAndReplay}>
                                   <Icons
-                                    name="icon-24gl-thumbsUp2"
+                                    name={`${
+                                      j.isLike
+                                        ? 'icon-24gf-thumbsUp2'
+                                        : 'icon-24gl-thumbsUp2'
+                                    }`}
                                     text={j.likeCount! > 0 ? j.likeCount : '点赞'}
                                     iconWrapClass={styles.iconWrap}
                                     onClick={() => onGiveLike(j, true)}

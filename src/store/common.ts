@@ -17,7 +17,7 @@ class CommonStore {
     token: '',
     isAdmin: false,
     hasAuth: false,
-    redirectUrl: '/login',
+    redirectUrl: '',
     noLogin: false,
   };
 

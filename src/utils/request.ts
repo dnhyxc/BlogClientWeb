@@ -148,7 +148,7 @@ export default function request(_url: string, options?: any): FetchResult {
           .then((data: any) => {
             if (err.response.status === 401 || err.response.status === 403) {
               // 重定向跳转
-              setAuth({ hasAuth: false, noLogin: true });
+              setAuth({ hasAuth: false, noLogin: true, redirectUrl: '/login' });
               onRedirect();
               return {
                 err: new Error(data.message || '系统异常'),
