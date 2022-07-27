@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button, message, Modal } from 'antd';
 import Image from '@/components/Image';
 import useStore from '@/store';
@@ -12,26 +13,42 @@ import DraftInput from '../DraftInput';
 import styles from './index.less';
 
 interface IProps {
-  comments: CommentParams[];
+  // comments: CommentParams[];
   authorId: string;
-  getCommentList?: Function;
+  // getCommentList?: Function;
   getAlertStatus?: Function;
 }
 
 const Comments: React.FC<IProps> = ({
-  comments,
-  getCommentList,
+  // comments,
+  // getCommentList,
   authorId,
   getAlertStatus,
 }) => {
   const [viewMoreComments, setViewMoreComments] = useState<string[]>([]);
   const [selectComment, setSelectComment] = useState<CommentParams>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [comments, setComments] = useState<CommentParams[]>([]);
+
+  const { id } = useParams();
 
   const {
     userInfoStore: { getUserInfo },
   } = useStore();
 
+  useEffect(() => {
+    getCommentList();
+  }, []);
+
+  // 获取评论列表
+  const getCommentList = async () => {
+    const res = normalizeResult<CommentParams[]>(await Service.getCommentList({ id: id! }));
+    if (res.success) {
+      setComments(res.data);
+    } else {
+      message.error(res.message);
+    }
+  };
   // 收集可以查看全部的commentId
   const onViewMoreReply = (commentId: string) => {
     setViewMoreComments([...viewMoreComments, commentId]);
@@ -64,14 +81,14 @@ const Comments: React.FC<IProps> = ({
     if (loading) return;
     const params = isThreeTier
       ? {
-          commentId: comment.commentId!,
-          fromCommentId: comment.commentId!,
-          userId: getUserInfo?.userId,
-        }
+        commentId: comment.commentId!,
+        fromCommentId: comment.commentId!,
+        userId: getUserInfo?.userId,
+      }
       : {
-          commentId: comment.commentId!,
-          userId: getUserInfo?.userId,
-        };
+        commentId: comment.commentId!,
+        userId: getUserInfo?.userId,
+      };
     setLoading(true);
     const res = normalizeResult<GiveLikeResult>(await Service.giveLike(params));
     if (res.success) {
@@ -87,12 +104,12 @@ const Comments: React.FC<IProps> = ({
   const onDeleteComment = (comment: CommentParams, isThreeTier?: boolean) => {
     const params = isThreeTier
       ? {
-          commentId: comment.commentId!,
-          fromCommentId: comment.commentId!,
-        }
+        commentId: comment.commentId!,
+        fromCommentId: comment.commentId!,
+      }
       : {
-          commentId: comment.commentId!,
-        };
+        commentId: comment.commentId!,
+      };
     Modal.confirm(modalConfig(params));
   };
 
@@ -109,13 +126,21 @@ const Comments: React.FC<IProps> = ({
     const res = normalizeResult<DeleteCommentResult>(await Service.deleteComment(params));
     if (res.success) {
       getCommentList && getCommentList();
+      getAlertStatus && getAlertStatus(false);
     } else {
-      message.error(res.message);
+      getAlertStatus && getAlertStatus(true);
     }
   };
 
   return (
     <div className={styles.Comments}>
+      <div className={styles.draftInputWrap}>
+        <DraftInput
+          getCommentList={getCommentList}
+          focus={false}
+          getAlertStatus={getAlertStatus}
+        />
+      </div>
       {comments &&
         comments.length > 0 &&
         comments.map((i) => {
@@ -135,9 +160,8 @@ const Comments: React.FC<IProps> = ({
                     <div className={styles.actionContent}>
                       <div className={styles.likeAndReplay}>
                         <Icons
-                          name={`${
-                            i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
-                          }`}
+                          name={`${i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
+                            }`}
                           text={i.likeCount! > 0 ? i.likeCount : '点赞'}
                           iconWrapClass={styles.iconWrap}
                           className={i.isLike ? styles.isLike : null}
@@ -224,11 +248,10 @@ const Comments: React.FC<IProps> = ({
                               <div className={styles.actionContent}>
                                 <div className={styles.likeAndReplay}>
                                   <Icons
-                                    name={`${
-                                      j.isLike
-                                        ? 'icon-24gf-thumbsUp2'
-                                        : 'icon-24gl-thumbsUp2'
-                                    }`}
+                                    name={`${j.isLike
+                                      ? 'icon-24gf-thumbsUp2'
+                                      : 'icon-24gl-thumbsUp2'
+                                      }`}
                                     text={j.likeCount! > 0 ? j.likeCount : '点赞'}
                                     iconWrapClass={styles.iconWrap}
                                     onClick={() => onGiveLike(j, true)}
@@ -287,14 +310,14 @@ const Comments: React.FC<IProps> = ({
                     })}
                     {checkReplyList(i.replyList, i.commentId!).length !==
                       i.replyList.length && (
-                      <div
-                        className={styles.viewMore}
-                        onClick={() => onViewMoreReply(i.commentId!)}
-                      >
-                        <span className={styles.viewText}>查看更多回复</span>
-                        <Icons name="icon-xiajiantou" />
-                      </div>
-                    )}
+                        <div
+                          className={styles.viewMore}
+                          onClick={() => onViewMoreReply(i.commentId!)}
+                        >
+                          <span className={styles.viewText}>查看更多回复</span>
+                          <Icons name="icon-xiajiantou" />
+                        </div>
+                      )}
                   </div>
                 )}
               </div>

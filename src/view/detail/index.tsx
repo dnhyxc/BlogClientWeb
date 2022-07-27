@@ -24,7 +24,7 @@ import styles from './index.less';
 
 const ArticleDetail: React.FC = () => {
   const [detail, setDetail] = useState<ArticleDetailParams>();
-  const [comments, setComments] = useState<CommentParams[]>([]);
+  // const [comments, setComments] = useState<CommentParams[]>([]);
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const { id } = useParams();
@@ -35,7 +35,7 @@ const ArticleDetail: React.FC = () => {
 
   useEffect(() => {
     getArticleDetail();
-    getCommentList();
+    // getCommentList();
   }, [id]);
 
   const getArticleDetail = async () => {
@@ -49,15 +49,15 @@ const ArticleDetail: React.FC = () => {
     }
   };
 
-  // 获取评论列表
-  const getCommentList = async () => {
-    const res = normalizeResult<CommentParams[]>(await Service.getCommentList({ id: id! }));
-    if (res.success) {
-      setComments(res.data);
-    } else {
-      message.error(res.message);
-    }
-  };
+  // // 获取评论列表
+  // const getCommentList = async () => {
+  //   const res = normalizeResult<CommentParams[]>(await Service.getCommentList({ id: id! }));
+  //   if (res.success) {
+  //     setComments(res.data);
+  //   } else {
+  //     message.error(res.message);
+  //   }
+  // };
 
   const getAlertStatus = (status: boolean) => {
     setShowAlert(status);
@@ -132,20 +132,13 @@ const ArticleDetail: React.FC = () => {
                 <Spin className={styles.spin} />
               </div>
             )}
-            <div className={styles.draftInputWrap}>
-              <DraftInput
-                getCommentList={getCommentList}
-                focus={false}
-                getAlertStatus={getAlertStatus}
-              />
-            </div>
-            {comments.length > 0 && detail && (
+            {detail && (
               <div className={styles.commentList}>
                 <div className={styles.title}>全部评论</div>
                 <Comments
-                  comments={comments}
+                  // comments={comments}
                   authorId={detail.authorId}
-                  getCommentList={getCommentList}
+                  // getCommentList={getCommentList}
                   getAlertStatus={getAlertStatus}
                 />
               </div>
