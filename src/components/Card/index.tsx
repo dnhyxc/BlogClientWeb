@@ -49,7 +49,6 @@ const Card: React.FC<IProps> = ({
       backgroundSize: imgBgcSize,
       backgroundRepeat: 'no-repeat',
       transition: 'all 0.3s ease-in-out',
-      // filter: "blur(0.5px)",
     };
   };
 
@@ -95,7 +94,7 @@ const Card: React.FC<IProps> = ({
           >
             <div
               className={classname(styles.imgWrap, imgWrapClass)}
-              style={bgcStyle(IMAGE)}
+              style={i.coverImage ? bgcStyle(i.coverImage) : bgcStyle(IMAGE)}
             >
               <div className={styles.text}>{i.title}</div>
             </div>
