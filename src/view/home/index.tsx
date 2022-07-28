@@ -22,7 +22,7 @@ import styles from './index.less';
 
 const { Search } = Input;
 
-interface IProps {}
+interface IProps { }
 
 const Home: React.FC<IProps> = () => {
   const [articleList, setArticleList] = useState<ArticleListParams[]>([]);
@@ -40,7 +40,7 @@ const Home: React.FC<IProps> = () => {
   // 获取文章列表
   const getArticleList = async () => {
     const res = normalizeResult<ArticleListParams[]>(
-      await Service.getArticleList({ pageNo: 1, pageSize: 20 })
+      await Service.getArticleList({ pageNo: 1, pageSize: 20, userId: getUserInfo?.userId })
     );
     if (res.success) {
       setArticleList(res.data);

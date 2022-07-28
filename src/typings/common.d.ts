@@ -28,6 +28,7 @@ export interface GetArticleListParams {
   pageNo: number;
   pageSize: number;
   filter?: any;
+  userId?: string;
 }
 
 export interface ArticleListParams {

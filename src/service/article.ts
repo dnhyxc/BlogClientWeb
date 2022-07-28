@@ -42,7 +42,7 @@ export async function releaseComment(params: CommentParams) {
   return res;
 }
 
-export async function getCommentList(params: { id: string }) {
+export async function getCommentList(params: { id: string; userId: string }) {
   const res = await post(API.GET_COMMENT_LIST, params);
   return res;
 }
