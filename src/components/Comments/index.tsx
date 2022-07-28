@@ -81,14 +81,14 @@ const Comments: React.FC<IProps> = ({
     if (loading) return;
     const params = isThreeTier
       ? {
-        commentId: comment.commentId!,
-        fromCommentId: comment.commentId!,
-        userId: getUserInfo?.userId,
-      }
+          commentId: comment.commentId!,
+          fromCommentId: comment.commentId!,
+          userId: getUserInfo?.userId,
+        }
       : {
-        commentId: comment.commentId!,
-        userId: getUserInfo?.userId,
-      };
+          commentId: comment.commentId!,
+          userId: getUserInfo?.userId,
+        };
     setLoading(true);
     const res = normalizeResult<GiveLikeResult>(await Service.giveLike(params));
     if (res.success) {
@@ -104,12 +104,12 @@ const Comments: React.FC<IProps> = ({
   const onDeleteComment = (comment: CommentParams, isThreeTier?: boolean) => {
     const params = isThreeTier
       ? {
-        commentId: comment.commentId!,
-        fromCommentId: comment.commentId!,
-      }
+          commentId: comment.commentId!,
+          fromCommentId: comment.commentId!,
+        }
       : {
-        commentId: comment.commentId!,
-      };
+          commentId: comment.commentId!,
+        };
     Modal.confirm(modalConfig(params));
   };
 
@@ -141,6 +141,7 @@ const Comments: React.FC<IProps> = ({
           getAlertStatus={getAlertStatus}
         />
       </div>
+      <div className={styles.title}>全部评论</div>
       {comments &&
         comments.length > 0 &&
         comments.map((i) => {
@@ -160,8 +161,9 @@ const Comments: React.FC<IProps> = ({
                     <div className={styles.actionContent}>
                       <div className={styles.likeAndReplay}>
                         <Icons
-                          name={`${i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
-                            }`}
+                          name={`${
+                            i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'
+                          }`}
                           text={i.likeCount! > 0 ? i.likeCount : '点赞'}
                           iconWrapClass={styles.iconWrap}
                           className={i.isLike ? styles.isLike : null}
@@ -248,12 +250,14 @@ const Comments: React.FC<IProps> = ({
                               <div className={styles.actionContent}>
                                 <div className={styles.likeAndReplay}>
                                   <Icons
-                                    name={`${j.isLike
-                                      ? 'icon-24gf-thumbsUp2'
-                                      : 'icon-24gl-thumbsUp2'
-                                      }`}
+                                    name={`${
+                                      j.isLike
+                                        ? 'icon-24gf-thumbsUp2'
+                                        : 'icon-24gl-thumbsUp2'
+                                    }`}
                                     text={j.likeCount! > 0 ? j.likeCount : '点赞'}
                                     iconWrapClass={styles.iconWrap}
+                                    className={j.isLike ? styles.isLike : null}
                                     onClick={() => onGiveLike(j, true)}
                                   />
                                   <Icons
@@ -310,14 +314,14 @@ const Comments: React.FC<IProps> = ({
                     })}
                     {checkReplyList(i.replyList, i.commentId!).length !==
                       i.replyList.length && (
-                        <div
-                          className={styles.viewMore}
-                          onClick={() => onViewMoreReply(i.commentId!)}
-                        >
-                          <span className={styles.viewText}>查看更多回复</span>
-                          <Icons name="icon-xiajiantou" />
-                        </div>
-                      )}
+                      <div
+                        className={styles.viewMore}
+                        onClick={() => onViewMoreReply(i.commentId!)}
+                      >
+                        <span className={styles.viewText}>查看更多回复</span>
+                        <Icons name="icon-xiajiantou" />
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

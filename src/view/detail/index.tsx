@@ -14,17 +14,15 @@ import Header from '@/components/Header';
 import Image from '@/components/Image';
 import RightBar from '@/components/RightBar';
 import Toc from '@/components/ArticleToc';
-import DraftInput from '@/components/DraftInput';
 import Comments from '@/components/Comments';
 import * as Service from '@/service';
 import useStore from '@/store';
 import { normalizeResult } from '@/utils/tools';
-import { ArticleDetailParams, CommentParams } from '@/typings/common';
+import { ArticleDetailParams } from '@/typings/common';
 import styles from './index.less';
 
 const ArticleDetail: React.FC = () => {
   const [detail, setDetail] = useState<ArticleDetailParams>();
-  // const [comments, setComments] = useState<CommentParams[]>([]);
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const { id } = useParams();
@@ -35,7 +33,6 @@ const ArticleDetail: React.FC = () => {
 
   useEffect(() => {
     getArticleDetail();
-    // getCommentList();
   }, [id]);
 
   const getArticleDetail = async () => {
@@ -48,16 +45,6 @@ const ArticleDetail: React.FC = () => {
       message.error(res.message);
     }
   };
-
-  // // 获取评论列表
-  // const getCommentList = async () => {
-  //   const res = normalizeResult<CommentParams[]>(await Service.getCommentList({ id: id! }));
-  //   if (res.success) {
-  //     setComments(res.data);
-  //   } else {
-  //     message.error(res.message);
-  //   }
-  // };
 
   const getAlertStatus = (status: boolean) => {
     setShowAlert(status);
@@ -134,13 +121,7 @@ const ArticleDetail: React.FC = () => {
             )}
             {detail && (
               <div className={styles.commentList}>
-                <div className={styles.title}>全部评论</div>
-                <Comments
-                  // comments={comments}
-                  authorId={detail.authorId}
-                  // getCommentList={getCommentList}
-                  getAlertStatus={getAlertStatus}
-                />
+                <Comments authorId={detail.authorId} getAlertStatus={getAlertStatus} />
               </div>
             )}
           </div>
