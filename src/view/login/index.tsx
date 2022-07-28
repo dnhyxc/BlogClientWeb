@@ -19,8 +19,8 @@ const Login = () => {
 
   const onLogin = async () => {
     const res = normalizeResult<LoginData>(
-      await login({ username: 'dnhyxc', password: 'dnh@06130614' })
-      // await login({ username: 'xixi', password: 'dnh@902209' })
+      // await login({ username: 'dnhyxc', password: 'dnh@06130614' })
+      await login({ username: 'xixi', password: 'dnh@902209' })
       // await login({ username: 'cxcx', password: 'dnh@902209' })
     );
     if (res.success) {

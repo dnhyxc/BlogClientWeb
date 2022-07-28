@@ -10,16 +10,22 @@ export type Result<T> =
       success: false;
       err: Error;
       message: string;
+      code?: number | string;
       data?: any;
     };
 
-export function normalizeResult<T = any>(res: { err: Error | null; data: any }): Result<T> {
+export function normalizeResult<T = any>(res: {
+  err: Error | null;
+  data: any;
+  code?: string;
+}): Result<T> {
   if (!res) {
     return {
       success: false,
       data: null,
       message: '',
       err: new Error(''),
+      code: '',
     };
   }
 
@@ -28,6 +34,7 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
       success: false,
       err: res.err,
       message: res.err.message,
+      code: res.code,
     };
   }
   // 第一层 data 是服务端返回的原始 response
@@ -38,6 +45,7 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
       success: false,
       err: new Error(''),
       message: '未知错误',
+      code: '',
     };
   }
 
@@ -64,6 +72,7 @@ export function normalizeResult<T = any>(res: { err: Error | null; data: any }):
       err: new Error(data.message),
       message: data.message,
       data,
+      code: data.code,
     };
   }
 

@@ -6,8 +6,8 @@
  * @FilePath: \src\view\detail\index.tsx
  */
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Affix, BackTop, Spin, message, Alert, Button } from 'antd';
+import { useParams } from 'react-router-dom';
+import { Affix, BackTop, Spin, message } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import Preview from '@/components/Preview';
 import Header from '@/components/Header';
@@ -15,21 +15,17 @@ import Image from '@/components/Image';
 import RightBar from '@/components/RightBar';
 import Toc from '@/components/ArticleToc';
 import Comments from '@/components/Comments';
+import MAlert from '@/components/Alert';
 import * as Service from '@/service';
-import useStore from '@/store';
+import { useLoginStatus } from '@/hooks';
 import { normalizeResult } from '@/utils/tools';
 import { ArticleDetailParams } from '@/typings/common';
 import styles from './index.less';
 
 const ArticleDetail: React.FC = () => {
   const [detail, setDetail] = useState<ArticleDetailParams>();
-  const [showAlert, setShowAlert] = useState<boolean>(false);
-
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  const { commonStore } = useStore();
+  const { showAlert, toLogin, onCloseAlert, setAlertStatus } = useLoginStatus();
 
   useEffect(() => {
     getArticleDetail();
@@ -46,15 +42,6 @@ const ArticleDetail: React.FC = () => {
     }
   };
 
-  const getAlertStatus = (status: boolean) => {
-    setShowAlert(status);
-  };
-
-  const toLogin = () => {
-    commonStore.setAuth({ redirectUrl: pathname });
-    navigate('/login');
-  };
-
   const renderCoverImg = (title: string, url: string, desc: string) => {
     return (
       <div className={styles.titleWrap}>
@@ -68,22 +55,7 @@ const ArticleDetail: React.FC = () => {
   return (
     <div>
       <div className={styles.detailContainer}>
-        {showAlert && (
-          <Alert
-            message={
-              <div>
-                您尚未登录，暂时无权操作，请前往
-                <Button type="link" className={styles.toLogin} onClick={toLogin}>
-                  登录
-                </Button>
-                后再试！
-              </div>
-            }
-            type="warning"
-            closable
-            className={styles.alert}
-          />
-        )}
+        {showAlert && <MAlert onClick={toLogin} onClose={onCloseAlert} />}
         <div className={styles.headerWrap}>
           <Header needLeft needMenu excludesWidth>
             <div className={styles.headerContent}>
@@ -121,7 +93,7 @@ const ArticleDetail: React.FC = () => {
             )}
             {detail && (
               <div className={styles.commentList}>
-                <Comments authorId={detail.authorId} getAlertStatus={getAlertStatus} />
+                <Comments authorId={detail.authorId} getAlertStatus={setAlertStatus} />
               </div>
             )}
           </div>

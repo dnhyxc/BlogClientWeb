@@ -12,10 +12,12 @@ import Content from '@/components/Content';
 import Header from '@/components/Header';
 import RightBar from '@/components/RightBar';
 import Card from '@/components/Card';
+import MAlert from '@/components/Alert';
+import { useLoginStatus } from '@/hooks';
+import useStore from '@/store';
 import * as Service from '@/service';
 import { normalizeResult } from '@/utils/tools';
 import { ArticleListParams } from '@/typings/common';
-import { list } from '../../../mock';
 import styles from './index.less';
 
 const { Search } = Input;
@@ -26,6 +28,10 @@ const Home: React.FC<IProps> = () => {
   const [articleList, setArticleList] = useState<ArticleListParams[]>([]);
 
   const navigate = useNavigate();
+  const { showAlert, toLogin, onCloseAlert, setAlertStatus, setResult } = useLoginStatus();
+  const {
+    userInfoStore: { getUserInfo },
+  } = useStore();
 
   useEffect(() => {
     getArticleList();
@@ -55,7 +61,9 @@ const Home: React.FC<IProps> = () => {
     return {
       title: '确定删除该评论吗？',
       async onOk() {
-        const res = normalizeResult<{ id: string }>(await Service.deleteArticle({ articleId }));
+        const res = normalizeResult<{ id: string }>(
+          await Service.deleteArticle({ articleId })
+        );
         if (res.success) {
           getArticleList();
         } else {
@@ -63,6 +71,19 @@ const Home: React.FC<IProps> = () => {
         }
       },
     };
+  };
+
+  // 文章点赞
+  const likeArticle = async (id: string) => {
+    if (!getUserInfo) {
+      setAlertStatus(true);
+      return;
+    }
+    const res = normalizeResult<{ isLike: boolean }>(
+      await Service.likeArticle({ id, userId: getUserInfo.userId })
+    );
+
+    setResult(res, getArticleList);
   };
 
   const onSearch = (value: string) => {
@@ -79,12 +100,18 @@ const Home: React.FC<IProps> = () => {
 
   return (
     <div className={styles.container}>
+      {showAlert && <MAlert onClick={toLogin} onClose={onCloseAlert} />}
       <Header needMenu needLeft={false} right={rightNode()}>
         文章列表
       </Header>
       <Content className={styles.contentWrap}>
         <div className={styles.content}>
-          <Card list={articleList} toDetail={toDetail} deleteArticle={deleteArticle} />
+          <Card
+            list={articleList}
+            toDetail={toDetail}
+            deleteArticle={deleteArticle}
+            likeArticle={likeArticle}
+          />
           <RightBar className={styles.rightbar} />
         </div>
       </Content>

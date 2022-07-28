@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Input, Alert } from 'antd';
+import { Button, Input, message } from 'antd';
 import { useParams } from 'react-router-dom';
 import classname from 'classname';
 import useStore from '@/store';
@@ -97,6 +97,13 @@ const DraftInput: React.FC<IProps> = ({
   // 发布评论
   const submitComment = async () => {
     if (!keyword.trim()) return;
+    if (!getUserInfo) {
+      getAlertStatus && getAlertStatus(true);
+      onReplay && onReplay({}, true);
+      setKeyword('');
+      setShowIcon(false);
+      return;
+    }
     const params = {
       ...getUserInfo,
       articleId: id || '',
@@ -118,16 +125,21 @@ const DraftInput: React.FC<IProps> = ({
 
     const res = normalizeResult<ReplayCommentResult>(await Service.releaseComment(params));
 
-    if (res.success) {
-      getAlertStatus && getAlertStatus(false);
-      getCommentList && getCommentList();
-    } else {
-      getAlertStatus && getAlertStatus(true);
-    }
-
     onReplay && onReplay({}, true);
     setKeyword('');
     setShowIcon(false);
+
+    if (res.success) {
+      getCommentList && getCommentList();
+    }
+
+    if (!res.success && res.code === 409) {
+      getAlertStatus && getAlertStatus(true);
+    }
+
+    if (!res.success && res.code !== 409) {
+      message.error(res.message);
+    }
   };
 
   return (

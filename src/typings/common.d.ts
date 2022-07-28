@@ -37,6 +37,8 @@ export interface ArticleListParams {
   createTime: number;
   authorId: string;
   coverImage: string;
+  isLike: boolean;
+  likeCount: number;
 }
 
 export interface ArticleDetailParams {

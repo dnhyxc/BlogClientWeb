@@ -13,18 +13,11 @@ import DraftInput from '../DraftInput';
 import styles from './index.less';
 
 interface IProps {
-  // comments: CommentParams[];
   authorId: string;
-  // getCommentList?: Function;
   getAlertStatus?: Function;
 }
 
-const Comments: React.FC<IProps> = ({
-  // comments,
-  // getCommentList,
-  authorId,
-  getAlertStatus,
-}) => {
+const Comments: React.FC<IProps> = ({ authorId, getAlertStatus }) => {
   const [viewMoreComments, setViewMoreComments] = useState<string[]>([]);
   const [selectComment, setSelectComment] = useState<CommentParams>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,6 +42,7 @@ const Comments: React.FC<IProps> = ({
       message.error(res.message);
     }
   };
+
   // 收集可以查看全部的commentId
   const onViewMoreReply = (commentId: string) => {
     setViewMoreComments([...viewMoreComments, commentId]);
@@ -79,6 +73,10 @@ const Comments: React.FC<IProps> = ({
   // 点赞接口
   const onGiveLike = async (comment: CommentParams, isThreeTier?: boolean) => {
     if (loading) return;
+    if (!getUserInfo) {
+      getAlertStatus && getAlertStatus(true);
+      return;
+    }
     const params = isThreeTier
       ? {
           commentId: comment.commentId!,
@@ -91,12 +89,15 @@ const Comments: React.FC<IProps> = ({
         };
     setLoading(true);
     const res = normalizeResult<GiveLikeResult>(await Service.giveLike(params));
+    setLoading(false);
     if (res.success) {
-      setLoading(false);
       getCommentList && getCommentList();
-      getAlertStatus && getAlertStatus(false);
-    } else {
+    }
+    if (!res.success && res.code === 409) {
       getAlertStatus && getAlertStatus(true);
+    }
+    if (!res.success && res.code !== 409) {
+      message.error(res.message);
     }
   };
 
@@ -126,9 +127,12 @@ const Comments: React.FC<IProps> = ({
     const res = normalizeResult<DeleteCommentResult>(await Service.deleteComment(params));
     if (res.success) {
       getCommentList && getCommentList();
-      getAlertStatus && getAlertStatus(false);
-    } else {
+    }
+    if (!res.success && res.code === 409) {
       getAlertStatus && getAlertStatus(true);
+    }
+    if (!res.success && res.code !== 409) {
+      message.error(res.message);
     }
   };
 

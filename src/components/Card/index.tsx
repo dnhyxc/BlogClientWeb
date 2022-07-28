@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Skeleton, Popover } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import classname from 'classname';
@@ -19,9 +19,9 @@ interface IProps {
   descClass?: string;
   skeletonRows?: number;
   skeletonAvatar?: string;
-  giveLike?: Function;
   articleEdit?: Function;
   deleteArticle?: Function;
+  likeArticle?: Function;
 }
 
 const Card: React.FC<IProps> = ({
@@ -34,9 +34,9 @@ const Card: React.FC<IProps> = ({
   descClass,
   skeletonRows = 3,
   skeletonAvatar,
-  giveLike,
   articleEdit,
   deleteArticle,
+  likeArticle,
 }) => {
   const {
     userInfoStore: { getUserInfo },
@@ -54,7 +54,7 @@ const Card: React.FC<IProps> = ({
 
   // 文章点赞
   const onGiveLike = (item: ArticleListParams) => {
-    giveLike && giveLike(item);
+    likeArticle && likeArticle(item.id);
   };
 
   const content = (item: ArticleListParams) => {
@@ -105,9 +105,10 @@ const Card: React.FC<IProps> = ({
               <div className={styles.action}>
                 <div className={styles.icons}>
                   <Icons
-                    name="icon-good"
-                    text="点赞"
+                    name={`${i.isLike ? 'icon-24gf-thumbsUp2' : 'icon-24gl-thumbsUp2'}`}
+                    text={i.likeCount! > 0 ? i.likeCount : '点赞'}
                     iconWrapClass={styles.iconWrap}
+                    className={i.isLike ? styles.isLike : null}
                     onClick={() => onGiveLike(i)}
                   />
                   <Icons

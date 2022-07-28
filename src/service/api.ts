@@ -16,6 +16,8 @@ const ARTICLE_LIST = '/api/articleList';
 const ARTICLE_DETAIL = '/api/articleDetail';
 // 获取文章详情
 const DELETE_ARTICLE = '/api/deleteArticle';
+// 文章点赞
+const LIKE_ARTICLE = '/api/likeArticle';
 
 // 评论
 const COMMENTS = '/api/comments';
@@ -31,6 +33,7 @@ export {
   LOGIN,
   UPDATE_INFO,
   ARTICLE_LIST,
+  LIKE_ARTICLE,
   CREATE_ARTICLE,
   UPLOAD,
   ARTICLE_DETAIL,

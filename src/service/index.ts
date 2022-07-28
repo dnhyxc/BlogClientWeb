@@ -8,6 +8,7 @@ import {
   giveLike,
   deleteComment,
   deleteArticle,
+  likeArticle,
 } from './article';
 
 export const upload = (params: any) => {
@@ -27,4 +28,5 @@ export {
   giveLike,
   deleteComment,
   deleteArticle,
+  likeArticle,
 };
